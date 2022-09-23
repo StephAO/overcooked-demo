@@ -6,9 +6,10 @@ from overcooked_ai_py.mdp.overcooked_mdp import OvercookedGridworld
 from overcooked_ai_py.mdp.overcooked_env import OvercookedEnv
 from overcooked_ai_py.mdp.actions import Action, Direction
 from overcooked_ai_py.planning.planners import MotionPlanner, NO_COUNTERS_PARAMS
-from human_aware_rl.rllib.rllib import load_agent
+from oai_agents.agents import load_agent
+from pathlib import Path
 import random, os, pickle, json
-import ray
+import pandas as pd
 
 # Relative path to where all static pre-trained agents are stored on server
 AGENT_DIR = None
@@ -16,13 +17,15 @@ AGENT_DIR = None
 # Maximum allowable game time (in seconds)
 MAX_GAME_TIME = None
 
-def _configure(max_game_time, agent_dir):
-    global AGENT_DIR, MAX_GAME_TIME
+
+def _configure(fps, max_game_time, agent_dir):
+    global AGENT_DIR, MAX_GAME_TIME, FPS
+    FPS = fps
     MAX_GAME_TIME = max_game_time
-    AGENT_DIR = agent_dir
+    AGENT_DIR = Path(agent_dir)
+
 
 class Game(ABC):
-
     """
     Class representing a game object. Coordinates the simultaneous actions of arbitrary
     number of players. Override this base class in order to use. 
@@ -41,15 +44,13 @@ class Game(ABC):
     # be worth it
 
     EMPTY = 'EMPTY'
-    
+
     class Status:
         DONE = 'done'
         ACTIVE = 'active'
         RESET = 'reset'
         INACTIVE = 'inactive'
         ERROR = 'error'
-
-
 
     def __init__(self, *args, **kwargs):
         """
@@ -82,7 +83,6 @@ class Game(ABC):
         """
         pass
 
-
     @abstractmethod
     def is_finished(self):
         """
@@ -108,7 +108,7 @@ class Game(ABC):
         """
         Number of milliseconds to pause game on reset
         """
-        return 3000
+        return 10000
 
     def apply_actions(self):
         """
@@ -156,7 +156,6 @@ class Game(ABC):
         """
         return False
 
-
     def tick(self):
         """
         Updates the game state by applying each of the pending actions. This is done so that players cannot directly modify
@@ -165,7 +164,7 @@ class Game(ABC):
         One can think of "enqueue_action" like calling "git add" and "tick" like calling "git commit"
 
         Subclasses should try to override `apply_actions` if possible. Only override this method if necessary
-        """ 
+        """
         if not self.is_active:
             return self.Status.INACTIVE
         if self.needs_reset():
@@ -174,7 +173,7 @@ class Game(ABC):
 
         self.apply_actions()
         return self.Status.DONE if self.is_finished() else self.Status.ACTIVE
-    
+
     def enqueue_action(self, player_id, action):
         """
         Add (player_id, action) pair to the pending action queue, without modifying underlying game state
@@ -199,7 +198,7 @@ class Game(ABC):
         as the size of the game state will be the most important factor in game performance. This is sent to the client
         every frame update.
         """
-        return { "players" : self.players }
+        return {"players": self.players}
 
     def to_json(self):
         """
@@ -226,12 +225,12 @@ class Game(ABC):
             idx = self.players.index(self.EMPTY)
         elif not idx:
             idx = len(self.players)
-        
+
         padding = max(0, idx - len(self.players) + 1)
         for _ in range(padding):
             self.players.append(self.EMPTY)
             self.pending_actions.append(self.EMPTY)
-        
+
         self.players[idx] = player_id
         self.pending_actions[idx] = Queue(maxsize=buff_size)
 
@@ -267,7 +266,6 @@ class Game(ABC):
         else:
             return True
 
-
     def clear_pending_actions(self):
         """
         Remove all queued actions for all players
@@ -286,11 +284,9 @@ class Game(ABC):
         Return any game metadata to server driver. Really only relevant for Psiturk code
         """
         return {}
-        
 
 
 class DummyGame(Game):
-
     """
     Standin class used to test basic server logic
     """
@@ -318,14 +314,14 @@ class DummyGame(Game):
 
 
 class DummyInteractiveGame(Game):
-
     """
     Standing class used to test interactive components of the server logic
     """
 
     def __init__(self, **kwargs):
         super(DummyInteractiveGame, self).__init__(**kwargs)
-        self.max_players = int(kwargs.get('playerZero', 'human') == 'human') + int(kwargs.get('playerOne', 'human') == 'human')
+        self.max_players = int(kwargs.get('playerZero', 'human') == 'human') + int(
+            kwargs.get('playerOne', 'human') == 'human')
         self.max_count = kwargs.get('max_count', 30)
         self.counter = 0
         self.counts = [0] * self.max_players
@@ -353,7 +349,7 @@ class DummyInteractiveGame(Game):
             state['player_{}_count'.format(i)] = self.counts[i]
         return state
 
-    
+
 class OvercookedGame(Game):
     """
     Class for bridging the gap between Overcooked_Env and the Game interface
@@ -381,7 +377,8 @@ class OvercookedGame(Game):
         - _curr_game_over: Determines whether the game on the current mdp has ended
     """
 
-    def __init__(self, layouts=["cramped_room"], mdp_params={}, num_players=2, gameTime=30, playerZero='human', playerOne='human', showPotential=False, randomized=False, **kwargs):
+    def __init__(self, layouts=["cramped_room"], mdp_params={}, num_players=2, gameTime=30, playerZero='human',
+                 playerOne='human', showPotential=False, randomized=False, **kwargs):
         super(OvercookedGame, self).__init__(**kwargs)
         self.show_potential = showPotential
         self.mdp_params = mdp_params
@@ -395,14 +392,14 @@ class OvercookedGame(Game):
         self.npc_policies = {}
         self.npc_state_queues = {}
         self.action_to_overcooked_action = {
-            "STAY" : Action.STAY,
-            "UP" : Direction.NORTH,
-            "DOWN" : Direction.SOUTH,
-            "LEFT" : Direction.WEST,
-            "RIGHT" : Direction.EAST,
-            "SPACE" : Action.INTERACT
+            "STAY": Action.STAY,
+            "UP": Direction.NORTH,
+            "DOWN": Direction.SOUTH,
+            "LEFT": Direction.WEST,
+            "RIGHT": Direction.EAST,
+            "SPACE": Action.INTERACT
         }
-        self.ticks_per_ai_action = 4
+        self.ticks_per_ai_action = 1
         self.curr_tick = 0
         self.human_players = set()
         self.npc_players = set()
@@ -421,11 +418,9 @@ class OvercookedGame(Game):
             self.add_player(player_one_id, idx=1, buff_size=1, is_human=False)
             self.npc_policies[player_one_id] = self.get_policy(playerOne, idx=1)
             self.npc_state_queues[player_one_id] = LifoQueue()
-        
 
     def _curr_game_over(self):
         return time() - self.start_time >= self.max_time
-
 
     def needs_reset(self):
         return self._curr_game_over() and not self.is_finished()
@@ -447,15 +442,15 @@ class OvercookedGame(Game):
             else:
                 raise ValueError("Inconsistent state")
 
-
     def npc_policy_consumer(self, policy_id):
+        print('NPC policy consumer', flush=True)
         queue = self.npc_state_queues[policy_id]
         policy = self.npc_policies[policy_id]
         while self._is_active:
             state = queue.get()
             npc_action, _ = policy.action(state)
+            print(f'Action: {npc_action}', flush=True)
             super(OvercookedGame, self).enqueue_action(policy_id, npc_action)
-
 
     def is_full(self):
         return self.num_players >= self.max_players
@@ -490,7 +485,7 @@ class OvercookedGame(Game):
                 joint_action[i] = self.pending_actions[i].get(block=False)
             except Empty:
                 pass
-        
+
         # Apply overcooked game logic to get state transition
         prev_state = self.state
         self.state, info = self.mdp.get_state_transition(prev_state, joint_action)
@@ -508,7 +503,6 @@ class OvercookedGame(Game):
 
         # Return about the current transition
         return prev_state, joint_action, info
-        
 
     def enqueue_action(self, player_id, action):
         overcooked_action = self.action_to_overcooked_action[action]
@@ -520,13 +514,13 @@ class OvercookedGame(Game):
             # Hacky way of making sure game timer doesn't "start" until after reset timeout has passed
             self.start_time += self.reset_timeout / 1000
 
-
     def tick(self):
         self.curr_tick += 1
         return super(OvercookedGame, self).tick()
 
     def activate(self):
         super(OvercookedGame, self).activate()
+        print('Activate', flush=True)
 
         # Sanity check at start of each game
         if not self.npc_players.union(self.human_players) == set(self.players):
@@ -545,6 +539,8 @@ class OvercookedGame(Game):
         self.threads = []
         for npc_policy in self.npc_policies:
             self.npc_policies[npc_policy].reset()
+            horizon = self.max_time * FPS / self.ticks_per_ai_action # num seconds * 30 fps / frames per agent actions
+            self.npc_policies[npc_policy].set_encoding_params(self.mdp, horizon)
             self.npc_state_queues[npc_policy].put(self.state)
             t = Thread(target=self.npc_policy_consumer, args=(npc_policy,))
             self.threads.append(t)
@@ -563,7 +559,6 @@ class OvercookedGame(Game):
         # Clear all action queues
         self.clear_pending_actions()
 
-
     def get_state(self):
         state_dict = {}
         state_dict['potential'] = self.phi if self.show_potential else None
@@ -579,18 +574,16 @@ class OvercookedGame(Game):
         return obj_dict
 
     def get_policy(self, npc_id, idx=0):
-        if npc_id.lower().startswith("rllib"):
+        if npc_id.lower().startswith("oai"):
             try:
-                # Loading rllib agents requires additional helpers
-                fpath = os.path.join(AGENT_DIR, npc_id, 'agent', 'agent')
-                agent =  load_agent(fpath, agent_index=idx)
+                # Loading aoi agents requires additional helpers
+                fpath = AGENT_DIR / npc_id
+                agent = load_agent(fpath)
+                agent.set_idx(p_idx=idx)
+                print(f'Loaded agent: {agent}', flush=True)
                 return agent
             except Exception as e:
-                raise IOError("Error loading Rllib Agent\n{}".format(e.__repr__()))
-            finally:
-                # Always kill ray after loading agent, otherwise, ray will crash once process exits
-                if ray.is_initialized():
-                    ray.shutdown()
+                raise IOError(f"{fpath}, Error loading OAI Agent\n{e}")
         else:
             try:
                 fpath = os.path.join(AGENT_DIR, npc_id, 'agent.pickle')
@@ -638,20 +631,20 @@ class OvercookedPsiturk(OvercookedGame):
         # Log data to send to psiturk client
         curr_reward = sum(info['sparse_reward_by_agent'])
         transition = {
-            "state" : json.dumps(prev_state.to_dict()),
-            "joint_action" : json.dumps(joint_action),
-            "reward" : curr_reward,
-            "time_left" : max(self.max_time - (time() - self.start_time), 0),
-            "score" : self.score,
-            "time_elapsed" : time() - self.start_time,
-            "cur_gameloop" : self.curr_tick,
-            "layout" : json.dumps(self.mdp.terrain_mtx),
-            "layout_name" : self.curr_layout,
-            "trial_id" : self.trial_id,
-            "player_0_id" : self.players[0],
-            "player_1_id" : self.players[1],
-            "player_0_is_human" : self.players[0] in self.human_players,
-            "player_1_is_human" : self.players[1] in self.human_players
+            "state": json.dumps(prev_state.to_dict()),
+            "joint_action": json.dumps(joint_action),
+            "reward": curr_reward,
+            "time_left": max(self.max_time - (time() - self.start_time), 0),
+            "score": self.score,
+            "time_elapsed": time() - self.start_time,
+            "cur_gameloop": self.curr_tick,
+            "layout": json.dumps(self.mdp.terrain_mtx),
+            "layout_name": self.curr_layout,
+            "trial_id": self.trial_id,
+            "player_0_id": self.players[0],
+            "player_1_id": self.players[1],
+            "player_0_is_human": self.players[0] in self.human_players,
+            "player_1_is_human": self.players[1] in self.human_players
         }
 
         self.trajectory.append(transition)
@@ -660,13 +653,14 @@ class OvercookedPsiturk(OvercookedGame):
         """
         Returns and then clears the accumulated trajectory
         """
-        data = { "uid" : self.psiturk_uid  + "_" + str(time()), "trajectory" : self.trajectory }
+        data = {"uid": self.psiturk_uid + "_" + str(time()), "trajectory": self.trajectory}
+        save_data = pd.DataFrame(self.trajectory)
+        save_data.to_pickle('test.pickle')
         self.trajectory = []
         return data
 
 
 class OvercookedTutorial(OvercookedGame):
-
     """
     Wrapper on OvercookedGame that includes additional data for tutorial mechanics, most notably the introduction of tutorial "phases"
 
@@ -674,15 +668,16 @@ class OvercookedTutorial(OvercookedGame):
         - curr_phase (int): Indicates what tutorial phase we are currently on
         - phase_two_score (float): The exact sparse reward the user must obtain to advance past phase 2
     """
-    
 
-    def __init__(self, layouts=["tutorial_0"], mdp_params={}, playerZero='human', playerOne='AI', phaseTwoScore=15, **kwargs):
-        super(OvercookedTutorial, self).__init__(layouts=layouts, mdp_params=mdp_params, playerZero=playerZero, playerOne=playerOne, showPotential=False, **kwargs)
+    def __init__(self, layouts=["tutorial_0"], mdp_params={}, playerZero='human', playerOne='AI', phaseTwoScore=15,
+                 **kwargs):
+        super(OvercookedTutorial, self).__init__(layouts=layouts, mdp_params=mdp_params, playerZero=playerZero,
+                                                 playerOne=playerOne, showPotential=False, **kwargs)
         self.phase_two_score = phaseTwoScore
         self.phase_two_finished = False
         self.max_time = 0
         self.max_players = 2
-        self.ticks_per_ai_action = 8
+        self.ticks_per_ai_action = 2
         self.curr_phase = 0
 
     @property
@@ -696,7 +691,7 @@ class OvercookedTutorial(OvercookedGame):
             return self.score > 0
         elif self.curr_phase == 2:
             return self.phase_two_finished
-        return False 
+        return False
 
     def is_finished(self):
         return not self.layouts and self.score >= float('inf')
@@ -726,14 +721,11 @@ class OvercookedTutorial(OvercookedGame):
                 self.phase_two_finished = True
 
 
-
-
-
 class DummyOvercookedGame(OvercookedGame):
     """
     Class that hardcodes the AI to be random. Used for debugging
     """
-    
+
     def __init__(self, layouts=["cramped_room"], **kwargs):
         super(DummyOvercookedGame, self).__init__(layouts, **kwargs)
 
@@ -745,17 +737,25 @@ class DummyAI():
     """
     Randomly samples actions. Used for debugging
     """
+    def set_encoding_params(self, mdp, horizon):
+        pass
+
     def action(self, state):
-        [action] = random.sample([Action.STAY, Direction.NORTH, Direction.SOUTH, Direction.WEST, Direction.EAST, Action.INTERACT], 1)
+        [action] = random.sample(
+            [Action.STAY, Direction.NORTH, Direction.SOUTH, Direction.WEST, Direction.EAST, Action.INTERACT], 1)
         return action, None
 
     def reset(self):
         pass
 
+
 class DummyComputeAI(DummyAI):
     """
     Performs simulated compute before randomly sampling actions. Used for debugging
     """
+    def set_encoding_params(self, mdp, horizon):
+        pass
+
     def __init__(self, compute_unit_iters=1e5):
         """
         compute_unit_iters (int): Number of for loop cycles in one "unit" of compute. Number of 
@@ -763,7 +763,7 @@ class DummyComputeAI(DummyAI):
         """
         super(DummyComputeAI, self).__init__()
         self.compute_unit_iters = int(compute_unit_iters)
-    
+
     def action(self, state):
         # Randomly sample amount of time to busy wait
         iters = random.randint(1, 10) * self.compute_unit_iters
@@ -776,15 +776,18 @@ class DummyComputeAI(DummyAI):
                 val += 1
             else:
                 val += 2
-        
+
         # Return randomly sampled action
         return super(DummyComputeAI, self).action(state)
 
-    
+
 class StayAI():
     """
     Always returns "stay" action. Used for debugging
     """
+    def set_encoding_params(self, mdp, horizon):
+        pass
+
     def action(self, state):
         return Action.STAY, None
 
@@ -793,7 +796,6 @@ class StayAI():
 
 
 class TutorialAI():
-
     COOK_SOUP_LOOP = [
         # Grab first onion
         Direction.WEST,
@@ -826,7 +828,7 @@ class TutorialAI():
 
         # Cook soup
         Action.INTERACT,
-        
+
         # Grab plate
         Direction.EAST,
         Direction.SOUTH,
@@ -887,4 +889,5 @@ class TutorialAI():
         self.curr_tick = -1
         self.curr_phase += 1
 
-    
+    def set_encoding_params(self, mdp, horizon):
+        pass

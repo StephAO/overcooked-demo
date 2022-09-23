@@ -45,7 +45,7 @@ MAX_GAME_LENGTH = CONFIG['MAX_GAME_LENGTH']
 # Path to where pre-trained agents will be stored on server
 AGENT_DIR = CONFIG['AGENT_DIR']
 
-# Maximum number of games that can run concurrently. Contrained by available memory and CPU
+# Maximum number of games that can run concurrently. Constrained by available memory and CPU
 MAX_GAMES = CONFIG['MAX_GAMES']
 
 # Frames per second cap for serving to client
@@ -91,7 +91,7 @@ GAME_NAME_TO_CLS = {
     "psiturk" : OvercookedPsiturk
 }
 
-game._configure(MAX_GAME_LENGTH, AGENT_DIR)
+game._configure(MAX_FPS, MAX_GAME_LENGTH, AGENT_DIR)
 
 
 
@@ -543,7 +543,7 @@ def play_game(game, fps=30):
             socketio.sleep(game.reset_timeout/1000)
         else:
             socketio.emit('state_pong', { "state" : game.get_state() }, room=game.id)
-        socketio.sleep(1/fps)
+        socketio.sleep(1 / fps)
     
     with game.lock:
         data = game.get_data()
