@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <title>Overcooked</title>
+    <link rel="Favicon" href="static/favicon.ico"/>
+
+    <script src="static/lib/jquery-min.js" type="text/javascript"></script>
+    <script src="static/lib/d3.v3.min.js" type="text/javascript"></script>
+    <script src="static/lib/babel.min.js" type="text/javascript"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+            integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+            crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+            integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+            crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/phaser@3.23.0/dist/phaser.min.js"></script>
+
+    <script src="static/js/graphics.js" type="text/javascript"></script>
+    <!-- <script src="static/js/dummy_graphics.js", type="text/javascript"></script> -->
+    <script src="static/js/agent_comp.js" type="text/javascript"></script>
+
+<!--    <script>$(function(){$("#survey").load("static/templates/survey.html");});</script>-->
+
+    <link rel="stylesheet" href="static/css/bootstrap.min.css" type="text/css"/>
+    <link rel="stylesheet" href="static/css/style.css" type="text/css"/>
+    <link rel="stylesheet" href="static/css/survey.css">
+
+</head>
+<body>
+<div id="config" style="display:none;">{{config}}</div>
+<div id="overcooked-container" class="text-center">
+    <h3 id="game-title">Overcooked</h3>
+    <button id="next-round" class="text-center">Start Next Round</button>
+    <div id="game-over" style="display:none">
+        <h3>Rounds Complete</h3>
+    </div>
+    <div id="overcooked"></div>
+    {% if not psiturk %}
+    <button id="quit" class="text-center" style="display:none">Quit</button>
+    <button id="finish" class="text-center" style="display:none">Back To Game</button>
+    {% endif %}
+    <div id="error-exit" style="display:none">Tutorial ended unexpectedly (probably due to server side error)</div>
+</div>
+
+
+<div id="survey-container" style="display:none" class="wrap">
+    <h1 class="likert-header">Please answer the following 10 questions about the agent you just played with:</h1>
+    <form id="survey-form">
+        <label class="statement">1. The human-agent team worked fluently together.</label>
+        <ul class='likert'>
+            <li>
+                <input type="radio" name="s1" value="strong_agree" required="required">
+                <label>Strongly agree</label>
+            </li>
+            <li>
+                <input type="radio" name="s1" value="agree">
+                <label>Agree</label>
+            </li>
+            <li>
+                <input type="radio" name="s1" value="somewhat_agree">
+                <label>Somewhat Agree</label>
+            </li>
+            <li>
+                <input type="radio" name="s1" value="neutral">
+                <label>Neutral</label>
+            </li>
+            <li>
+                <input type="radio" name="s1" value="somewhat_disagree">
+                <label>Somewhat Disagree</label>
+            </li>
+            <li>
+                <input type="radio" name="s1" value="disagree">
+                <label>Disagree</label>
+            </li>
+            <li>
+                <input type="radio" name="s1" value="strong_disagree">
+                <label>Strongly disagree</label>
+            </li>
+        </ul>
+        <label class="statement">2. The human-agent team fluency improved over time.</label>
+        <ul class='likert'>
+            <li>
+                <input type="radio" name="s2" value="strong_agree">
+                <label>Strongly agree</label>
+            </li>
+            <li>
+                <input type="radio" name="s2" value="agree">
+                <label>Agree</label>
+            </li>
+            <li>
+                <input type="radio" name="s2" value="somewhat_agree">
+                <label>Somewhat Agree</label>
+            </li>
+            <li>
+                <input type="radio" name="s2" value="neutral">
+                <label>Neutral</label>
+            </li>
+            <li>
+                <input type="radio" name="s2" value="somewhat_disagree">
+                <label>Somewhat Disagree</label>
+            </li>
+            <li>
+                <input type="radio" name="s2" value="disagree">
+                <label>Disagree</label>
+            </li>
+            <li>
+                <input type="radio" name="s2" value="strong_disagree">
+                <label>Strongly disagree</label>
+            </li>
+        </ul>
+        <label class="statement">3. I was the most important team member on the team.</label>
+        <ul class='likert'>
+            <li>
+                <input type="radio" name="s3" value="strong_agree">
+                <label>Strongly agree</label>
+            </li>
+            <li>
+                <input type="radio" name="s3" value="agree">
+                <label>Agree</label>
+            </li>
+            <li>
+                <input type="radio" name="s3" value="somewhat_agree">
+                <label>Somewhat Agree</label>
+            </li>
+            <li>
+                <input type="radio" name="s3" value="neutral">
+                <label>Neutral</label>
+            </li>
+            <li>
+                <input type="radio" name="s3" value="somewhat_disagree">
+                <label>Somewhat Disagree</label>
+            </li>
+            <li>
+                <input type="radio" name="s3" value="disagree">
+                <label>Disagree</label>
+            </li>
+            <li>
+                <input type="radio" name="s3" value="strong_disagree">
+                <label>Strongly disagree</label>
+            </li>
+        </ul>
+        <label class="statement">4. The robot was the most important team member on the team.</label>
+        <ul class='likert'>
+            <li>
+                <input type="radio" name="s4" value="strong_agree">
+                <label>Strongly agree</label>
+            </li>
+            <li>
+                <input type="radio" name="s4" value="agree">
+                <label>Agree</label>
+            </li>
+            <li>
+                <input type="radio" name="s4" value="somewhat_agree">
+                <label>Somewhat Agree</label>
+            </li>
+            <li>
+                <input type="radio" name="s4" value="neutral">
+                <label>Neutral</label>
+            </li>
+            <li>
+                <input type="radio" name="s4" value="somewhat_disagree">
+                <label>Somewhat Disagree</label>
+            </li>
+            <li>
+                <input type="radio" name="s4" value="disagree">
+                <label>Disagree</label>
+            </li>
+            <li>
+                <input type="radio" name="s4" value="strong_disagree">
+                <label>Strongly disagree</label>
+            </li>
+        </ul>
+        <label class="statement">5. I trusted the agent to do the right thing at the right time.</label>
+        <ul class='likert'>
+            <li>
+                <input type="radio" name="s5" value="strong_agree">
+                <label>Strongly agree</label>
+            </li>
+            <li>
+                <input type="radio" name="s5" value="agree">
+                <label>Agree</label>
+            </li>
+            <li>
+                <input type="radio" name="s5" value="somewhat_agree">
+                <label>Somewhat Agree</label>
+            </li>
+            <li>
+                <input type="radio" name="s5" value="neutral">
+                <label>Neutral</label>
+            </li>
+            <li>
+                <input type="radio" name="s5" value="somewhat_disagree">
+                <label>Somewhat Disagree</label>
+            </li>
+            <li>
+                <input type="radio" name="s5" value="disagree">
+                <label>Disagree</label>
+            </li>
+            <li>
+                <input type="radio" name="s5" value="strong_disagree">
+                <label>Strongly disagree</label>
+            </li>
+        </ul>
+        <label class="statement">6. The agent helped me adapt to the task.</label>
+        <ul class='likert'>
+            <li>
+                <input type="radio" name="s6" value="strong_agree">
+                <label>Strongly agree</label>
+            </li>
+            <li>
+                <input type="radio" name="s6" value="agree">
+                <label>Agree</label>
+            </li>
+            <li>
+                <input type="radio" name="s6" value="somewhat_agree">
+                <label>Somewhat Agree</label>
+            </li>
+            <li>
+                <input type="radio" name="s6" value="neutral">
+                <label>Neutral</label>
+            </li>
+            <li>
+                <input type="radio" name="s6" value="somewhat_disagree">
+                <label>Somewhat Disagree</label>
+            </li>
+            <li>
+                <input type="radio" name="s6" value="disagree">
+                <label>Disagree</label>
+            </li>
+            <li>
+                <input type="radio" name="s6" value="strong_disagree">
+                <label>Strongly disagree</label>
+            </li>
+        </ul>
+        <label class="statement">7. I understood what the agent was trying to accomplish.</label>
+        <ul class='likert'>
+            <li>
+                <input type="radio" name="s7" value="strong_agree">
+                <label>Strongly agree</label>
+            </li>
+            <li>
+                <input type="radio" name="s7" value="agree">
+                <label>Agree</label>
+            </li>
+            <li>
+                <input type="radio" name="s7" value="somewhat_agree">
+                <label>Somewhat Agree</label>
+            </li>
+            <li>
+                <input type="radio" name="s7" value="neutral">
+                <label>Neutral</label>
+            </li>
+            <li>
+                <input type="radio" name="s7" value="somewhat_disagree">
+                <label>Somewhat Disagree</label>
+            </li>
+            <li>
+                <input type="radio" name="s7" value="disagree">
+                <label>Disagree</label>
+            </li>
+            <li>
+                <input type="radio" name="s7" value="strong_disagree">
+                <label>Strongly disagree</label>
+            </li>
+        </ul>
+        <label class="statement">8. The agent understood what I was trying to accomplish.</label>
+        <ul class='likert'>
+            <li>
+                <input type="radio" name="s8" value="strong_agree">
+                <label>Strongly agree</label>
+            </li>
+            <li>
+                <input type="radio" name="s8" value="agree">
+                <label>Agree</label>
+            </li>
+            <li>
+                <input type="radio" name="s8" value="somewhat_agree">
+                <label>Somewhat Agree</label>
+            </li>
+            <li>
+                <input type="radio" name="s8" value="neutral">
+                <label>Neutral</label>
+            </li>
+            <li>
+                <input type="radio" name="s8" value="somewhat_disagree">
+                <label>Somewhat Disagree</label>
+            </li>
+            <li>
+                <input type="radio" name="s8" value="disagree">
+                <label>Disagree</label>
+            </li>
+            <li>
+                <input type="radio" name="s8" value="strong_disagree">
+                <label>Strongly disagree</label>
+            </li>
+        </ul>
+        <label class="statement">9. The robot was intelligent.</label>
+        <ul class='likert'>
+            <li>
+                <input type="radio" name="s9" value="strong_agree">
+                <label>Strongly agree</label>
+            </li>
+            <li>
+                <input type="radio" name="s9" value="agree">
+                <label>Agree</label>
+            </li>
+            <li>
+                <input type="radio" name="s9" value="somewhat_agree">
+                <label>Somewhat Agree</label>
+            </li>
+            <li>
+                <input type="radio" name="s9" value="neutral">
+                <label>Neutral</label>
+            </li>
+            <li>
+                <input type="radio" name="s9" value="somewhat_disagree">
+                <label>Somewhat Disagree</label>
+            </li>
+            <li>
+                <input type="radio" name="s9" value="disagree">
+                <label>Disagree</label>
+            </li>
+            <li>
+                <input type="radio" name="s9" value="strong_disagree">
+                <label>Strongly disagree</label>
+            </li>
+        </ul>
+        <label class="statement">10. The agent was cooperative.</label>
+        <ul class='likert'>
+            <li>
+                <input type="radio" name="s10" value="strong_agree">
+                <label>Strongly agree</label>
+            </li>
+            <li>
+                <input type="radio" name="s10" value="agree">
+                <label>Agree</label>
+            </li>
+            <li>
+                <input type="radio" name="s10" value="somewhat_agree">
+                <label>Somewhat Agree</label>
+            </li>
+            <li>
+                <input type="radio" name="s10" value="neutral">
+                <label>Neutral</label>
+            </li>
+            <li>
+                <input type="radio" name="s10" value="somewhat_disagree">
+                <label>Somewhat Disagree</label>
+            </li>
+            <li>
+                <input type="radio" name="s10" value="disagree">
+                <label>Disagree</label>
+            </li>
+            <li>
+                <input type="radio" name="s10" value="strong_disagree">
+                <label>Strongly disagree</label>
+            </li>
+        </ul>
+        <div class="buttons">
+            <button class="clear">Clear</button>
+            <button class="submit">Submit</button>
+        </div>
+    </form>
+
+</div>
+
+
+<div id="control" class="text-center">
+    <button id="try-again" style="display:none;">Try Again?</button>
+</div>
+
+
+<noscript>
+    <h1>Warning: Javascript seems to be disabled</h1>
+    <p>This website requires that Javascript be enabled on your browser.</p>
+    <p>Instructions for enabling Javascript in your browser can be found
+        <a href="http://support.google.com/bin/answer.py?hl=en&answer=23852">here</a></p>
+</noscript>
+</body>
+</html>

@@ -57,6 +57,9 @@ PSITURK_CONFIG = json.dumps(CONFIG['psiturk'])
 # Default configuration for tutorial
 TUTORIAL_CONFIG = json.dumps(CONFIG['tutorial'])
 
+# Default configuration for tutorial
+SURVEY_CONFIG = json.dumps(CONFIG['agentComp'])
+
 # Global queue of available IDs. This is how we synch game creation and keep track of how many games are in memory
 FREE_IDS = queue.Queue(maxsize=MAX_GAMES)
 
@@ -88,7 +91,7 @@ USER_ROOMS = ThreadSafeDict()
 GAME_NAME_TO_CLS = {
     "overcooked" : OvercookedGame,
     "tutorial" : OvercookedTutorial,
-    "psiturk" : OvercookedPsiturk
+    "psiturk" : OvercookedPsiturk,
 }
 
 game._configure(MAX_FPS, MAX_GAME_LENGTH, AGENT_DIR)
@@ -258,22 +261,27 @@ def  _leave_game(user_id):
 
 def _create_game(user_id, game_name, params={}):
     game, err = try_create_game(game_name, **params)
+    print(game, err, flush=True)
     if not game:
         emit("creation_failed", { "error" : err.__repr__() })
         return
     spectating = True
     with game.lock:
+        print('WHAT', game.is_full(), flush=True)
         if not game.is_full():
             spectating = False
             game.add_player(user_id)
         else:
             spectating = True
             game.add_spectator(user_id)
+        print('ARE', flush=True)
         join_room(game.id)
         set_curr_room(user_id, game.id)
+        print('WE', game.is_ready(), flush=True)
         if game.is_ready():
             game.activate()
             ACTIVE_GAMES.add(game.id)
+            print('WHAT ARE WE DOING?', flush=True)
             emit('start_game', { "spectating" : spectating, "start_info" : game.to_json()}, room=game.id)
             socketio.start_background_task(play_game, game, fps=MAX_FPS)
         else:
@@ -350,6 +358,12 @@ def instructions():
     psiturk = request.args.get('psiturk', False)
     return render_template('instructions.html', layout_conf=LAYOUT_GLOBALS, psiturk=psiturk)
 
+@app.route('/agent_comp')
+def agentComp():
+    psiturk = request.args.get('agent_comp', False)
+    print('calling render template', flush=True)
+    return render_template('agent_comp.html', config=SURVEY_CONFIG, psiturk=psiturk)
+
 @app.route('/tutorial')
 def tutorial():
     psiturk = request.args.get('psiturk', False)
@@ -407,7 +421,7 @@ def debug():
 @socketio.on('create')
 def on_create(data):
     user_id = request.sid
-
+    print('starting create', flush=True)
     with USERS[user_id]:
         # Retrieve current game if one exists
         curr_game = get_curr_game(user_id)
@@ -418,7 +432,8 @@ def on_create(data):
         params = data.get('params', {})
         game_name = data.get('game_name', 'overcooked')
         _create_game(user_id, game_name, params)
-    
+    print('done create', flush=True)
+
 
 @socketio.on('join')
 def on_join(data):

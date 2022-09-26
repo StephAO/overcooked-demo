@@ -25,6 +25,12 @@
         "tomato_value" : 13,
         "onion_value" : 21
     },
+    "agentComp" : {
+        "agentCompParams" : {
+            "layouts" : ["marshmallow_experiment", "forced_coordination"],
+            "agents" : ["RandAI", "StayAI"]
+        }
+    },
     "layout_globals" : {
         "onion_value" : 21,
         "tomato_value" : 13,

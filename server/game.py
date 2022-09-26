@@ -9,6 +9,8 @@ from overcooked_ai_py.planning.planners import MotionPlanner, NO_COUNTERS_PARAMS
 from oai_agents.agents import load_agent
 from pathlib import Path
 import random, os, pickle, json
+import  numpy as np
+import itertools
 import pandas as pd
 
 # Relative path to where all static pre-trained agents are stored on server
@@ -377,9 +379,10 @@ class OvercookedGame(Game):
         - _curr_game_over: Determines whether the game on the current mdp has ended
     """
 
-    def __init__(self, layouts=["cramped_room"], mdp_params={}, num_players=2, gameTime=30, playerZero='human',
+    def __init__(self, layouts=["cramped_room"], mdp_params=None, num_players=2, gameTime=30, playerZero='human',
                  playerOne='human', showPotential=False, randomized=False, **kwargs):
         super(OvercookedGame, self).__init__(**kwargs)
+        mdp_params = mdp_params or {}
         self.show_potential = showPotential
         self.mdp_params = mdp_params
         self.layouts = layouts
@@ -520,7 +523,6 @@ class OvercookedGame(Game):
 
     def activate(self):
         super(OvercookedGame, self).activate()
-        print('Activate', flush=True)
 
         # Sanity check at start of each game
         if not self.npc_players.union(self.human_players) == set(self.players):
@@ -669,20 +671,17 @@ class OvercookedTutorial(OvercookedGame):
         - phase_two_score (float): The exact sparse reward the user must obtain to advance past phase 2
     """
 
-    def __init__(self, layouts=["tutorial_0"], mdp_params={}, playerZero='human', playerOne='AI', phaseTwoScore=15,
+    def __init__(self, layouts=["tutorial_0"], mdp_params=None, playerZero='human', playerOne='AI', phaseTwoScore=15,
                  **kwargs):
         super(OvercookedTutorial, self).__init__(layouts=layouts, mdp_params=mdp_params, playerZero=playerZero,
                                                  playerOne=playerOne, showPotential=False, **kwargs)
+        mdp_params = mdp_params or {}
         self.phase_two_score = phaseTwoScore
         self.phase_two_finished = False
         self.max_time = 0
         self.max_players = 2
         self.ticks_per_ai_action = 2
         self.curr_phase = 0
-
-    @property
-    def reset_timeout(self):
-        return 1
 
     def needs_reset(self):
         if self.curr_phase == 0:
