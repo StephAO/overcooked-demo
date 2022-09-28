@@ -359,10 +359,16 @@ def instructions():
     return render_template('instructions.html', layout_conf=LAYOUT_GLOBALS, psiturk=psiturk)
 
 @app.route('/agent_comp')
-def agentComp():
+def agent_comp():
     psiturk = request.args.get('agent_comp', False)
     print('calling render template', flush=True)
     return render_template('agent_comp.html', config=SURVEY_CONFIG, psiturk=psiturk)
+
+@app.route('/agent_rank')
+def agent_rank():
+    psiturk = request.args.get('agent_rank', False)
+    print('calling render template', flush=True)
+    return render_template('agent_rank.html', psiturk=psiturk)
 
 @app.route('/tutorial')
 def tutorial():

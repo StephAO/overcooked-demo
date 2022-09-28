@@ -17,11 +17,17 @@ const shuffleArray = (array) => {
 
 var agents = [];
 var layouts = [];
+var human_color = 'blue'
+var agent_colors = {}
 
 // Read in game config provided by server
 $(function() {
     config = JSON.parse($('#config').text());
-    agent_layouts = cartesian(config['agentCompParams']['agents'], config['agentCompParams']['layouts']);
+    console.log(config)
+    for(i = 0; i < config['agents'].length; i++) {
+        agent_colors[config['agents'][i]] = config['non_human_colors'][i]
+    }
+    agent_layouts = cartesian(config['agents'], config['layouts']);
     let copy_al = agent_layouts.slice()
     console.log(copy_al);
     shuffleArray(agent_layouts);
@@ -49,7 +55,6 @@ $(function() {
 
 $(function() {
     $('#next-round').click(function() {
-        console.log('next round clicked')
         // Config for this specific game
         let data = {
             "params" : {
@@ -62,8 +67,7 @@ $(function() {
             "game_name" : "overcooked"
         };
         $('#next-round').hide();
-        console.log(data["params"]);
-
+        setAgentColors({0: human_color, 1: agent_colors[agent_layouts[round][0]]},)
         // create (or join if it exists) new game
         socket.emit("create", data);
     });
@@ -88,6 +92,7 @@ $(function() {
             $('#next-round').hide();
             // TODO end stuff here
         } else {
+            console.log('ready for next round?')
             $('#survey-container').hide();
             $('#next-round').text(`Start Next Round ${round + 1}/${agent_layouts.length}`);
             $('#next-round').show();

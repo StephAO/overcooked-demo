@@ -26,10 +26,9 @@
         "onion_value" : 21
     },
     "agentComp" : {
-        "agentCompParams" : {
-            "layouts" : ["marshmallow_experiment", "forced_coordination"],
-            "agents" : ["RandAI", "StayAI"]
-        }
+        "layouts" : ["counter_circuit_o_1order"],
+        "agents" : ["RandAI", "StayAI"],
+        "non_human_colors": ["red", "green", "orange", "purple"]
     },
     "layout_globals" : {
         "onion_value" : 21,

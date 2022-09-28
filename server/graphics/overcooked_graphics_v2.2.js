@@ -37,6 +37,11 @@ var game_config = {
 
 var graphics;
 
+// Should be invoked before any game is started
+function setAgentColors(player_colors) {
+    scene_config.player_colors = player_colors
+};
+
 // Invoked at every state_pong event from server
 function drawState(state) {
     // Try catch necessary because state pongs can arrive before graphics manager has finished initializing
