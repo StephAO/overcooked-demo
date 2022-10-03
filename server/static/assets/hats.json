@@ -1,0 +1,268 @@
+{"frames": {
+
+	"EAST-bluehat.png": {
+	"filename": "blue_E.png",
+	"frame": {"x":1,"y":145,"w":10,"h":6},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":8,"y":10,"w":10,"h":6},
+	"sourceSize": {"w":31,"h":28}
+},
+"NORTH-bluehat.png":  {
+	"filename": "blue_E.png",
+	"frame": {"x":1,"y":145,"w":10,"h":6},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":8,"y":10,"w":10,"h":6},
+	"sourceSize": {"w":31,"h":28}
+},
+"SOUTH-bluehat.png":  {
+	"filename": "blue_E.png",
+	"frame": {"x":1,"y":145,"w":10,"h":6},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":8,"y":10,"w":10,"h":6},
+	"sourceSize": {"w":31,"h":28}
+},
+"WEST-bluehat.png":{
+	"filename": "blue_W.png",
+	"frame": {"x":1,"y":145,"w":10,"h":6},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":8,"y":10,"w":10,"h":6},
+	"sourceSize": {"w":31,"h":28}
+},
+"EAST-greenhat.png":{
+	"filename": "green_E.png",
+	"frame": {"x":1,"y":153,"w":10,"h":6},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":8,"y":10,"w":10,"h":6},
+	"sourceSize": {"w":31,"h":28}
+},
+"NORTH-greenhat.png":{
+	"filename": "green_E.png",
+	"frame": {"x":1,"y":153,"w":10,"h":6},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":8,"y":10,"w":10,"h":6},
+	"sourceSize": {"w":31,"h":28}
+},
+"SOUTH-greenhat.png":{
+	"filename": "green_E.png",
+	"frame": {"x":1,"y":153,"w":10,"h":6},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":8,"y":10,"w":10,"h":6},
+	"sourceSize": {"w":31,"h":28}
+},
+"WEST-greenhat.png":{
+	"filename": "green_W.png",
+	"frame": {"x":1,"y":153,"w":10,"h":6},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":8,"y":10,"w":10,"h":6},
+	"sourceSize": {"w":31,"h":28}
+},
+"EAST-orangehat.png":{
+	"filename": "orange_E.png",
+	"frame": {"x":1,"y":161,"w":10,"h":6},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":8,"y":10,"w":10,"h":6},
+	"sourceSize": {"w":31,"h":28}
+},
+"NORTH-orangehat.png":{
+	"filename": "orange_E.png",
+	"frame": {"x":1,"y":161,"w":10,"h":6},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":8,"y":10,"w":10,"h":6},
+	"sourceSize": {"w":31,"h":28}
+},
+"SOUTH-orangehat.png":{
+	"filename": "orange_E.png",
+	"frame": {"x":1,"y":161,"w":10,"h":6},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":8,"y":10,"w":10,"h":6},
+	"sourceSize": {"w":31,"h":28}
+},
+"WEST-orangehat.png":{
+	"filename": "orange_W.png",
+	"frame": {"x":1,"y":161,"w":10,"h":6},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":8,"y":10,"w":10,"h":6},
+	"sourceSize": {"w":31,"h":28}
+},
+"EAST-pinkhat.png":{
+	"filename": "pink_E.png",
+	"frame": {"x":1,"y":169,"w":10,"h":6},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":8,"y":10,"w":10,"h":6},
+	"sourceSize": {"w":31,"h":28}
+},
+"NORTH-pinkhat.png":{
+	"filename": "pink_E.png",
+	"frame": {"x":1,"y":169,"w":10,"h":6},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":8,"y":10,"w":10,"h":6},
+	"sourceSize": {"w":31,"h":28}
+},
+"SOUTH-pinkhat.png":{
+	"filename": "pink_E.png",
+	"frame": {"x":1,"y":169,"w":10,"h":6},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":8,"y":10,"w":10,"h":6},
+	"sourceSize": {"w":31,"h":28}
+},
+"WEST-pinkhat.png":{
+	"filename": "pink_W.png",
+	"frame": {"x":1,"y":169,"w":10,"h":6},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":8,"y":10,"w":10,"h":6},
+	"sourceSize": {"w":31,"h":28}
+},
+"EAST-redhat.png":{
+	"filename": "red_E.png",
+	"frame": {"x":1,"y":177,"w":10,"h":6},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":8,"y":10,"w":10,"h":6},
+	"sourceSize": {"w":31,"h":28}
+},
+"NORTH-redhat.png":{
+	"filename": "red_E.png",
+	"frame": {"x":1,"y":177,"w":10,"h":6},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":8,"y":10,"w":10,"h":6},
+	"sourceSize": {"w":31,"h":28}
+},
+"SOUTH-redhat.png":{
+	"filename": "red_E.png",
+	"frame": {"x":1,"y":177,"w":10,"h":6},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":8,"y":10,"w":10,"h":6},
+	"sourceSize": {"w":31,"h":28}
+},
+"WEST-redhat.png":{
+	"filename": "red_W.png",
+	"frame": {"x":1,"y":177,"w":10,"h":6},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":8,"y":10,"w":10,"h":6},
+	"sourceSize": {"w":31,"h":28}
+},
+"EAST-violethat.png":{
+	"filename": "violet_E.png",
+	"frame": {"x":1,"y":185,"w":10,"h":6},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":8,"y":10,"w":10,"h":6},
+	"sourceSize": {"w":31,"h":28}
+},
+"NORTH-violethat.png":{
+	"filename": "violet_E.png",
+	"frame": {"x":1,"y":185,"w":10,"h":6},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":8,"y":10,"w":10,"h":6},
+	"sourceSize": {"w":31,"h":28}
+},
+"SOUTH-violethat.png":{
+	"filename": "violet_E.png",
+	"frame": {"x":1,"y":185,"w":10,"h":6},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":8,"y":10,"w":10,"h":6},
+	"sourceSize": {"w":31,"h":28}
+},
+"WEST-violethat.png":{
+	"filename": "violet_W.png",
+	"frame": {"x":1,"y":185,"w":10,"h":6},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":8,"y":10,"w":10,"h":6},
+	"sourceSize": {"w":31,"h":28}
+},
+"EAST-whitehat.png":{
+	"filename": "white_E.png",
+	"frame": {"x":1,"y":193,"w":10,"h":6},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":8,"y":10,"w":10,"h":6},
+	"sourceSize": {"w":31,"h":28}
+},
+"NORTH-whitehat.png":{
+	"filename": "white_E.png",
+	"frame": {"x":1,"y":193,"w":10,"h":6},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":8,"y":10,"w":10,"h":6},
+	"sourceSize": {"w":31,"h":28}
+},
+"SOUTH-whitehat.png":{
+	"filename": "white_E.png",
+	"frame": {"x":1,"y":193,"w":10,"h":6},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":8,"y":10,"w":10,"h":6},
+	"sourceSize": {"w":31,"h":28}
+},
+"WEST-whitehat.png":{
+	"filename": "white_W.png",
+	"frame": {"x":1,"y":193,"w":10,"h":6},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":8,"y":10,"w":10,"h":6},
+	"sourceSize": {"w":31,"h":28}
+},
+"EAST-yellowhat.png":{
+	"filename": "yellow_E.png",
+	"frame": {"x":1,"y":201,"w":10,"h":6},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":8,"y":10,"w":10,"h":6},
+	"sourceSize": {"w":31,"h":28}
+},
+"NORTH-yellowhat.png":{
+	"filename": "yellow_E.png",
+	"frame": {"x":1,"y":201,"w":10,"h":6},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":8,"y":10,"w":10,"h":6},
+	"sourceSize": {"w":31,"h":28}
+},
+"SOUTH-yellowhat.png":{
+	"filename": "yellow_E.png",
+	"frame": {"x":1,"y":201,"w":10,"h":6},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":8,"y":10,"w":10,"h":6},
+	"sourceSize": {"w":31,"h":28}
+},
+"WEST-yellowhat.png":{
+	"filename": "yellow_W.png",
+	"frame": {"x":1,"y":201,"w":10,"h":6},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":8,"y":10,"w":10,"h":6},
+	"sourceSize": {"w":31,"h":28}
+}},
+"meta": {
+	"app": "https://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "hats.png",
+	"format": "RGBA8888",
+	"size": {"w":13,"h":208},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:51b6bf701689630e06bcb578cfbbc1f4:255ef4b38b9b3dfe540c24ed8ffeb918:5a1eb1de078429d86eaff72a8db04630$"
+}
+}
