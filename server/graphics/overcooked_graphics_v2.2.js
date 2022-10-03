@@ -118,6 +118,9 @@ class OvercookedScene extends Phaser.Scene {
         this.load.atlas("chefs",
             this.assets_loc + "chefs.png",
             this.assets_loc + "chefs.json");
+        this.load.atlas("hats",
+            this.assets_loc + "hats.png",
+            this.assets_loc + "hats.json");
         this.load.atlas("objects",
             this.assets_loc + "objects.png",
             this.assets_loc + "objects.json");
@@ -214,14 +217,14 @@ class OvercookedScene extends Phaser.Scene {
                 let hatsprite = this.add.sprite(
                     this.tileSize*x,
                     this.tileSize*y,
-                    "chefs",
+                    "hats",
                     `${dir}-${this.player_colors[pi]}hat.png`
                 );
-                hatsprite.setDisplaySize(this.tileSize, this.tileSize);
+                hatsprite.setDisplaySize(this.tileSize*2.5, this.tileSize*2.5);
                 hatsprite.depth = 2;
-                hatsprite.setOrigin(0);
+                hatsprite.setOrigin(0.22,0.4);
                 sprites['chefs'][pi] = {chefsprite, hatsprite};
-            }
+                }
             else {
                 let chefsprite = sprites['chefs'][pi]['chefsprite'];
                 let hatsprite = sprites['chefs'][pi]['hatsprite'];
