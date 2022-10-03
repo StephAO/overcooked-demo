@@ -28,7 +28,7 @@
     "agentComp" : {
         "layouts" : ["counter_circuit_o_1order"],
         "agents" : ["RandAI", "StayAI"],
-        "non_human_colors": ["red", "green", "orange", "purple"]
+        "non_human_colors": ["blue", "green", "orange", "pink", "red", "violet", "white", "yellow"]
     },
     "layout_globals" : {
         "onion_value" : 21,
