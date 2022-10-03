@@ -13,7 +13,7 @@
       }
       table, td, th {  
         border: 1px solid #ddd;
-        text-align: left;
+        text-align: center;
       }
 
       table {
@@ -36,10 +36,7 @@
   </head>
   <body>
     <div class="container">
-      {% if not psiturk %}
-        <h4 class="text-center"><a href="./">Back to game</a></h4>
-      {% endif %}
-      <p>
+      <p class="text-center">
         Hello! In this task, you will be playing a
         cooking game. You will play one of two chefs
         in a restaurant that serves onion soups.
@@ -50,11 +47,11 @@
       <br>
 
       <h3 class="text-center">Layouts</h3>
-      <p>
+      <p class="text-center">
         This is what one level of the game looks like:
       </p>
       <img class="center" src="static/images/training0.png" style="width:500px">
-      <p>
+      <p class="text-center">
         There are a number of objects in the game, labeled here:
       </p>
       <img class="center" src="static/images/training0-annotated.png" style="width:800px">
@@ -65,12 +62,12 @@
 
       <h3 class="text-center">Movement and interactions</h3>
       <img class="center" src="static/images/space-arrows.png" style="width:250px">
-      <p>
+      <p class="text-center">
         You can move up, down, left, and right using
         the <b>arrow keys</b>, and interact with objects
         using the <b>spacebar</b>.
       </p>
-      <p>
+      <p class="text-center">
         You can interact with objects by facing them and pressing
         <b>spacebar</b>. Here are some examples:
         <ul>
@@ -85,7 +82,7 @@
 
       <br>
       <br>
-      <p>
+      <p class="text-center">
         Note that as you and your partner are moving around the kitchen
         you <u><b>cannot occupy the same location</b></u>.
       </p>
@@ -95,15 +92,15 @@
 
       <h3 class="text-center">Cooking</h3>
       <img class="center" src="static/images/soup.png" style="width:250px">
-      <p>
+      <p class="text-center">
         Once 3 onions are in the pot, the soup will automatically start cooking.
       </p>
-      <p>
+      <p class="text-center">
         When a soup begins cooking, you'll notice a red number appear over the pot to 
         denote the cook time. This number counts upward until the soup is done. Soups
         take 20 timesteps to cook.
       </p>
-      <p>
+      <p class="text-center">
         Each soup is worth 20 points.
       </p>
 
@@ -113,7 +110,7 @@
 
       <h3 class="text-center">Serving</h3>
       <img class="center" src="static/images/serving-counter.png" style="width:800px">
-      <p>
+      <p class="text-center">
         Once the soup is in a bowl, you can serve it by bringing it to
         a grey serving counter.
       </p>
@@ -127,7 +124,7 @@
       <br>
 
       <h3 class="text-center">Score</h3>
-      <p>
+      <p class="text-center">
         When a soup is served at the serving counter, 20 points are added to your score.
       </p>
 
@@ -136,8 +133,7 @@
       <br>
 
       <h3 class="text-center">Goal</h3>
-      <img class="center" src="static/images/info-panel.png" style="width:500px">
-      <p>
+      <p class="text-center">
         Your goal in this task is to serve as many soups as you can
         before each level ends.
       </p>
@@ -145,6 +141,7 @@
       <br>
       <hr>
       <br>
+      <button class="text-center" onclick="location.href='./tutorial';">Go to Tutorial</button>
     </div>
   </body>
 </html>

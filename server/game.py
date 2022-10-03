@@ -594,6 +594,12 @@ class OvercookedGame(Game):
             except Exception as e:
                 raise IOError("Error loading agent\n{}".format(e.__repr__()))
 
+    def get_data(self):
+        """
+        Return any game metadata to server driver. Really only relevant for Psiturk code
+        """
+        return {'score': self.score}
+
 
 class OvercookedPsiturk(OvercookedGame):
     """
@@ -671,8 +677,8 @@ class OvercookedTutorial(OvercookedGame):
         - phase_two_score (float): The exact sparse reward the user must obtain to advance past phase 2
     """
 
-    def __init__(self, layouts=["tutorial_0"], mdp_params=None, playerZero='human', playerOne='AI', phaseTwoScore=15,
-                 **kwargs):
+    def __init__(self, layouts=None, mdp_params=None, playerZero='human', playerOne='AI', phaseTwoScore=15, **kwargs):
+        layouts = ["tutorial_0"]
         super(OvercookedTutorial, self).__init__(layouts=layouts, mdp_params=mdp_params, playerZero=playerZero,
                                                  playerOne=playerOne, showPotential=False, **kwargs)
         mdp_params = mdp_params or {}
@@ -682,18 +688,13 @@ class OvercookedTutorial(OvercookedGame):
         self.max_players = 2
         self.ticks_per_ai_action = 2
         self.curr_phase = 0
+        self.score = 0
 
     def needs_reset(self):
-        if self.curr_phase == 0:
-            return self.score > 0
-        elif self.curr_phase == 1:
-            return self.score > 0
-        elif self.curr_phase == 2:
-            return self.phase_two_finished
-        return False
+        return self.score > 0
 
     def is_finished(self):
-        return not self.layouts and self.score >= float('inf')
+        return self.score > 0
 
     def reset(self):
         super(OvercookedTutorial, self).reset()
@@ -707,17 +708,9 @@ class OvercookedTutorial(OvercookedGame):
         Apply regular MDP logic with retroactive score adjustment tutorial purposes
         """
         _, _, info = super(OvercookedTutorial, self).apply_actions()
-
         human_reward, ai_reward = info['sparse_reward_by_agent']
-
         # We only want to keep track of the human's score in the tutorial
         self.score -= ai_reward
-
-        # Phase two requires a specific reward to complete
-        if self.curr_phase == 2:
-            self.score = 0
-            if human_reward == self.phase_two_score:
-                self.phase_two_finished = True
 
 
 class DummyOvercookedGame(OvercookedGame):

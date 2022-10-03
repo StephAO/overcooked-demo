@@ -13,6 +13,7 @@ from flask import Flask, render_template, jsonify, request
 from flask_socketio import SocketIO, join_room, leave_room, emit
 from game import OvercookedGame, OvercookedTutorial, Game, OvercookedPsiturk
 import game
+from pyairtable import Table
 
 
 ### Thoughts -- where I'll log potential issues/ideas as they come up
@@ -96,8 +97,8 @@ GAME_NAME_TO_CLS = {
 
 game._configure(MAX_FPS, MAX_GAME_LENGTH, AGENT_DIR)
 
-
-
+api_key = os.environ['AIRTABLE_API_KEY']
+airtable = Table(api_key, 'appANDT09wpSE4QLn', 'tblaCbOjLcQqpNGMF')
 
 
 #######################
@@ -368,7 +369,7 @@ def agent_comp():
 def agent_rank():
     psiturk = request.args.get('agent_rank', False)
     print('calling render template', flush=True)
-    return render_template('agent_rank.html', psiturk=psiturk)
+    return render_template('agent_rank.html', config=SURVEY_CONFIG, psiturk=psiturk)
 
 @app.route('/tutorial')
 def tutorial():
@@ -485,6 +486,7 @@ def on_join(data):
                     WAITING_GAMES.put(game.id)
                     emit('waiting', { "in_game" : True }, room=game.id)
 
+
 @socketio.on('leave')
 def on_leave(data):
     user_id = request.sid
@@ -495,6 +497,7 @@ def on_leave(data):
             emit('end_game', { "status" : Game.Status.DONE, "data" : {}})
         else:
             emit('end_lobby')
+
 
 @socketio.on('action')
 def on_action(data):
@@ -517,6 +520,7 @@ def on_connect():
 
     USERS[user_id] = Lock()
 
+
 @socketio.on('disconnect')
 def on_disconnect():
     # Ensure game data is properly cleaned-up in case of unexpected disconnect
@@ -528,8 +532,15 @@ def on_disconnect():
 
     del USERS[user_id]
 
+@socketio.on('submit_survey')
+def on_connect(data):
+    print(type(data), data, flush=True)
+    airtable.create(data)
 
-
+@socketio.on('submit_ranking')
+def on_connect(data):
+    print(type(data), data, flush=True)
+    airtable.create(data)
 
 # Exit handler for server
 def on_exit():

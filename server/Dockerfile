@@ -28,6 +28,7 @@ RUN pip install torch torchvision torchaudio --extra-index-url https://download.
 # Install chai dependencies
 RUN pip install -e /overcooked_ai
 RUN pip install -e /oai_agents
+RUN pip install pyairtable
 
 RUN apt-get update
 RUN apt-get install -y libgl1-mesa-dev
@@ -39,11 +40,13 @@ COPY ./graphics/$GRAPHICS ./static/js/graphics.js
 COPY ./config.json ./config.json
 
 
-
 # Set environment variables that will be used by app.py
 ENV HOST 0.0.0.0
 ENV PORT 5000
 ENV CONF_PATH config.json
+
+# Set airtable api key
+ENV AIRTABLE_API_KEY key9qXD3bda1nLxfH
 
 # Do the thing
 EXPOSE 5000

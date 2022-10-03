@@ -2,16 +2,16 @@
 body {
     padding:0px;
     margin: 0px;
-    background-color: white;
+    background-color: #c7b299;
     color: black;
-    font-weight: 300; 
+    font-weight: 300;
     font-size: 13pt;
 }
 
 
 /* text styling */
 strong {
-  font-weight: 600;         
+  font-weight: 600;
 }
 
 .warm {
@@ -244,6 +244,18 @@ h1 {
 .center {
     margin: auto;
     width: 80%;
-    padding: 10px;
+    padding: 25px;
     text-align: center;
 }
+
+figure{
+    display: inline-block;
+}
+
+.agent_img{
+object-fit: none;
+height: 170px;
+}
+
+* {background-color: #c7b299}
+html {background-color: #c7b299}
