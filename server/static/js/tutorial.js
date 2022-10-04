@@ -7,13 +7,13 @@ var config;
 
 var tutorial_instructions = () => [
     `
-    <p>Mechanic: <b>Delivery</b></p>
-    <p>Your goal here is to cook and deliver soups in order to earn reward. Notice how your partner is busily churning out soups</p>
-    <p>See if you can copy his actions in order to cook and deliver the appropriate soup</p>
-    <p><b>Note</b>: only recipes in the <b>All Orders</b> field will earn reward. Thus, you must cook a soup with <b>exactly</b> 3 onions</p>
-    <p><b>You will advance only when you have delivered the appropriate soup</b></p>
+    <p>
+    Your goal is to cook and deliver soups in order to earn reward. <br>
+    Notice how your partner is busily churning out soups. <br>
+    See if you can copy his actions in order to cook and deliver the a soup.<br>
+    <b>You will advance only when you have delivered the appropriate soup</b><br>
+    </p>
     <p>Good luck!</p>
-    <br></br>
     `,
 ];
 
@@ -23,7 +23,6 @@ var curr_tutorial_phase;
 $(function() {
     config = JSON.parse($('#config').text());
     tutorial_instructions = tutorial_instructions();
-    tutorial_hints = tutorial_hints();
     $('#quit').show();
 });
 
@@ -39,15 +38,6 @@ $(function() {
         };
         socket.emit("join", data);
         $('try-again').attr("disable", true);
-    });
-});
-
-$(function() {
-    $('#show-hint').click(function() {
-        let text = $(this).text();
-        let new_text = text === "Show Hint" ? "Hide Hint" : "Show Hint";
-        $('#hint-wrapper').toggle();
-        $(this).text(new_text);
     });
 });
 
@@ -91,38 +81,12 @@ socket.on('start_game', function(data) {
     $('#game-over').hide();
     $('#try-again').hide();
     $('#try-again').attr('disabled', true)
-    $('#hint-wrapper').hide();
-    $('#show-hint').text('Show Hint');
     $('#game-title').text(`Tutorial in Progress`);
     $('#game-title').show();
     $('#tutorial-instructions').append(tutorial_instructions[curr_tutorial_phase]);
     $('#instructions-wrapper').show();
-    $('#hint').append(tutorial_hints[curr_tutorial_phase]);
     enable_key_listener();
     graphics_start(graphics_config);
-});
-
-socket.on('reset_game', function(data) {
-    curr_tutorial_phase++;
-    graphics_end();
-    disable_key_listener();
-    $("#overcooked").empty();
-    $('#tutorial-instructions').empty();
-    $('#hint').empty();
-    $("#tutorial-instructions").append(tutorial_instructions[curr_tutorial_phase]);
-    $("#hint").append(tutorial_hints[curr_tutorial_phase]);
-    $('#game-title').text(`Tutorial in Progress, Phase ${curr_tutorial_phase + 1}/${tutorial_instructions.length}`);
-    
-    let button_pressed = $('#show-hint').text() === 'Hide Hint';
-    if (button_pressed) {
-        $('#show-hint').click();
-    }
-    graphics_config = {
-        container_id : "overcooked",
-        start_info : data.state
-    };
-    graphics_start(graphics_config);
-    enable_key_listener();
 });
 
 socket.on('state_pong', function(data) {
@@ -134,10 +98,9 @@ socket.on('end_game', function(data) {
     // Hide game data and display game-over html
     graphics_end();
     disable_key_listener();
-    $('#game-title').hide();
+//    $('#game-title').hide();
     $('#instructions-wrapper').hide();
-    $('#hint-wrapper').hide();
-    $('#show-hint').hide();
+    $('#overcooked-container').hide();
     $('#game-over').show();
     $('#quit').hide();
     
@@ -150,7 +113,6 @@ socket.on('end_game', function(data) {
         // Propogate game stats to parent window with psiturk code
         window.top.postMessage({ name : "tutorial-done" }, "*");
     }
-
     $('#finish').show();
 });
 
@@ -205,6 +167,8 @@ socket.on("connect", function() {
         "params" : config['tutorialParams'],
         "game_name" : "tutorial"
     };
+
+    $('#finish').hide();
 
     // create (or join if it exists) new game
     socket.emit("join", data);

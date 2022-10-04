@@ -13,7 +13,7 @@ from flask import Flask, render_template, jsonify, request
 from flask_socketio import SocketIO, join_room, leave_room, emit
 from game import OvercookedGame, OvercookedTutorial, Game, OvercookedPsiturk
 import game
-from pyairtable import Table
+from pyairtable import Table, Base
 
 
 ### Thoughts -- where I'll log potential issues/ideas as they come up
@@ -98,7 +98,7 @@ GAME_NAME_TO_CLS = {
 game._configure(MAX_FPS, MAX_GAME_LENGTH, AGENT_DIR)
 
 api_key = os.environ['AIRTABLE_API_KEY']
-airtable = Table(api_key, 'appANDT09wpSE4QLn', 'tblaCbOjLcQqpNGMF')
+airtable_base = Base(api_key, 'appANDT09wpSE4QLn')
 
 
 #######################
@@ -138,6 +138,7 @@ def try_create_game(game_name ,**kwargs):
         assert FREE_MAP[curr_id], "Current id is already in use"
         game_cls = GAME_NAME_TO_CLS.get(game_name, OvercookedGame)
         game = game_cls(id=curr_id, **kwargs)
+        print("Game created!!!", flush=True)
     except queue.Empty:
         err = RuntimeError("Server at max capacity")
         return None, err
@@ -433,8 +434,10 @@ def on_create(data):
         # Retrieve current game if one exists
         curr_game = get_curr_game(user_id)
         if curr_game:
+            print("in current game?", flush=True)
+            cleanup_game(curr_game)
             # Cannot create if currently in a game
-            return
+            # return
         
         params = data.get('params', {})
         game_name = data.get('game_name', 'overcooked')
@@ -535,12 +538,12 @@ def on_disconnect():
 @socketio.on('submit_survey')
 def on_connect(data):
     print(type(data), data, flush=True)
-    airtable.create(data)
+    airtable_base.create('tblaCbOjLcQqpNGMF', data)
 
 @socketio.on('submit_ranking')
 def on_connect(data):
     print(type(data), data, flush=True)
-    airtable.create(data)
+    airtable_base.create('tblxp2qGubm69vH82', {'ordered_agents': json.dumps(data)})
 
 # Exit handler for server
 def on_exit():

@@ -20,6 +20,7 @@ var agents = [];
 var layouts = [];
 var human_color = 'blue';
 var agent_colors = {};
+var agent_layouts = null;
 
 
 // Read in game config provided by server
@@ -63,7 +64,7 @@ $(function() {
                 "playerZero" : "human",
                 "playerOne" : agent_layouts[round][0],
                 "layouts" : [agent_layouts[round][1]],
-                "gameTime" : 10,
+                "gameTime" : 60,
                 "randomized" : false
             },
             "game_name" : "overcooked"
@@ -76,54 +77,6 @@ $(function() {
         socket.emit("create", data);
     });
 });
-
-
-const form = document.querySelector("form");
-$(function() {
-    $( "form" ).submit(function(event) {
-        event.preventDefault();
-        console.log(event)
-        let likert_scores = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-        for(i = 1; i <= 10; i++) {
-            var ele = document.getElementsByName(`s${i}`);
-
-            for(j = 0; j < ele.length; j++) {
-                if(ele[j].checked) {
-                    likert_scores[i-1] = parseInt(ele[j].value);
-                }
-            }
-        }
-        let data = {
-            "agent_name" : agent_layouts[round][0],
-            "layout_name" : agent_layouts[round][1],
-            "likert_scores" : likert_scores.toString(),
-            "round_score" : round_score
-        };
-
-        console.log(round, data);
-
-        round++;
-
-        if (round >= agent_layouts.length) {
-            console.log('????')
-            $('#survey-container').hide();
-            $('#next-round').hide();
-            $('#agents-imgs').hide();
-            $('#end-rounds').show()
-        } else {
-            $('#survey-container').hide();
-            $('#agents-imgs').show();
-            $("#teammate-img").attr('src', `\static/assets/${agent_colors[agent_layouts[round][0]]}_chef.png`);
-            $('#teammate-desc').text(`This is agent ${agent_colors[agent_layouts[round][0]]}. They will be your teammate for the next round.`);
-
-            $('#next-round').text(`Start Next Round ${round + 1}/${agent_layouts.length}`);
-            $('#next-round').show();
-        }
-        socket.emit("submit_survey", data);
-    });
-});
-
-
 
 
 /* * * * * * * * * * * * * 
@@ -164,6 +117,7 @@ socket.on('state_pong', function(data) {
 });
 
 socket.on('end_game', function(data) {
+    console.log("????")
     $('#game-title').hide();
     // Hide game data and display game-over html
     graphics_end();
@@ -182,7 +136,6 @@ socket.on('end_game', function(data) {
     }
     $('#overcooked-container').hide();
     $('#survey-container').show();
-
 });
 
 /* * * * * * * * * * * * * * 
@@ -225,6 +178,7 @@ function disable_key_listener() {
     $(document).off('keydown');
 };
 
+
 /* * * * * * * * * * * * 
  * Game Initialization *
  * * * * * * * * * * * */
@@ -233,7 +187,7 @@ socket.on("connect", function() {
     console.log("SRC: ", `static/assets/${agent_colors[agent_layouts[round][0]]}_chef.png`)
     $("#teammate-img").attr('src', `\static/assets/${agent_colors[agent_layouts[round][0]]}_chef.png`);
     $('#teammate-desc').text(`This is agent ${agent_colors[agent_layouts[round][0]]}. They will be your teammate for the next round.`);
-    $('#next-round').text(`Start Next Round ${round + 1}/${agent_layouts.length}`);
+    $('#next-round').text(`Start Next Round`);
     $('#next-round').show();
     $('#game-title').text(`Round ${round + 1} / ${agent_layouts.length}`);
     $('#game-title').show();

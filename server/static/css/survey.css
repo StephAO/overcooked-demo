@@ -1,74 +1,54 @@
-html,body {padding:0;margin:0;}
-.wrap {
-  font:12px Arial, san-serif;
-}
-h1.likert-header {
-  padding-left:4.25%;
-  margin:20px 0 0;
-}
-form .statement {
-  display:block;
-  font-size: 18px;
-  font-weight: bold;
-  padding: 30px 0 0 4.25%;
-  margin-bottom:10px;
+.question_content_custom {
+  border: 1px solid lightgray;
+  border-radius: 5px;
+  border-left: 4px solid #18a689;
+  padding: 10px;
+  margin: 10px 0;
 }
 
-form .likert_label {
-  display:block;
-  font-size: 14px;
-  font-weight: normal;
-  padding: 3px 0 0 4.25%;
-  margin-bottom:10px;
+.sd-radio__decorator {
+  background-color: rgba(0,0,0,.10)
+/*   border-radius: 100%; */
 }
 
-form .likert {
-  list-style:none;
-  width:100%;
-  margin:0;
-  padding:0 0 35px;
-  display:block;
-  border-bottom:2px solid #efefef;
+.sd-radio__decorator {
+  background-color: rgba(0,0,0,.10)
 }
 
-form .likert:last-of-type {border-bottom:0;}
-form .likert:before {
-  content: '';
-  position:relative;
-  top:12px;
-  left:9%;
-  display:block;
-  background-color:#efefef;
-  height:3px;
-  width:81%;
+.sd-item--checked .sd-radio__decorator:after {
+  content: " ";
+  display: block;
+  width: calcSize(1);
+  height: calcSize(1);
+  border-radius: 50%;
+  background-color: rgb(0,0,0,0.)
 }
-form .likert li {
-  display:inline-block;
-  width:13%;
-  text-align:center;
-  vertical-align: top;
-}
-form .likert li input[type=radio] {
-  display:block;
-  position:relative;
-  top:0;
-  left:50%;
-  margin-left:-6px;
 
+.sd-item--checked .sd-radio__decorator {
+  content: " ";
+  border-radius: 50%;
+  background-color: #18a689;
 }
-form .likert li label {width:100%;}
-form .buttons {
-  margin:30px 0;
-  padding:0 4.25%;
-  text-align:center
+
+
+.sd-item--checked .sd-radio__control:focus + .sd-radio__decorator:after {
+  content: " ";
+  border-radius: 50%;
+  background-color: white
 }
-form .buttons button {
-  padding: 5px 10px;
-  background-color: #67ab49;
-  border: 0;
-  border-radius: 3px;
+
+.sd-item--checked .sd-radio__control:focus + .sd-radio__decorator {
+  content: " ";
+  border-radius: 50%;
+  background-color: #18a689;
 }
-form .buttons .clear {background-color: #e9e9e9; text-align:center;}
-form .buttons .submit {background-color: #67ab49; text-align:center;}
-form .buttons .clear:hover {background-color: #ccc;}
-form .buttons .submit:hover {background-color: #14892c;}
+
+
+.sd-table__cell--header {
+  vertical-align: middle;
+}
+
+.sd-body__navigation {
+  align-items: center;
+  justify-content: center;
+}

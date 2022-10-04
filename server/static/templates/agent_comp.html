@@ -14,6 +14,9 @@
     <script src="static/lib/jquery-min.js" type="text/javascript"></script>
     <script src="static/lib/d3.v3.min.js" type="text/javascript"></script>
     <script src="static/lib/babel.min.js" type="text/javascript"></script>
+
+    <script src="https://unpkg.com/survey-jquery@1.9.51/survey.jquery.min.js"></script>
+    <link href="https://unpkg.com/survey-core@1.9.51/defaultV2.min.css" type="text/css" rel="stylesheet"/>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
             integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
             crossorigin="anonymous"></script>
@@ -43,333 +46,16 @@
     </div>
     <div id="overcooked"></div>
     {% if not psiturk %}
-    <button id="finish" class="text-center" style="display:none">Back To Game</button>
+    <button id="finish" class="sd-btn sd-btn--action sd-navigation__complete-btn" style="display:none">Back To Game</button>
     {% endif %}
     <div id="error-exit" style="display:none">Survey ended unexpectedly (probably due to server side error)</div>
 </div>
 
 
-<div id="survey-container" style="display:none" class="center">
-    <h3 class="likert-header">Please answer the following 10 questions about the agent you just played with:</h3>
-    <form id="survey-form">
-        <label class="statement">1. The human-agent team worked fluently together.</label>
-        <ul class='likert'>
-            <li>
-                <input type="radio" name="s1" value=-3 required="required">
-                <label class="likert_label">Strongly Disagree</label>
-            </li>
-            <li>
-                <input type="radio" name="s1" value=-2>
-                <label class="likert_label">Disagree</label>
-            </li>
-            <li>
-                <input type="radio" name="s1" value=-1>
-                <label class="likert_label">Somewhat Disagree</label>
-            </li>
-            <li>
-                <input type="radio" name="s1" value=0>
-                <label class="likert_label">Neutral</label>
-            </li>
-            <li>
-                <input type="radio" name="s1" value=1>
-                <label class="likert_label">Somewhat Agree</label>
-            </li>
-            <li>
-                <input type="radio" name="s1" value=2>
-                <label class="likert_label">Agree</label>
-            </li>
-            <li>
-                <input type="radio" name="s1" value=3>
-                <label class="likert_label">Strongly Agree</label>
-            </li>
-        </ul>
-        <label class="statement">2. The human-agent team fluency improved over time.</label>
-        <ul class='likert'>
-            <li>
-                <input type="radio" name="s2" value=-3 required="required">
-                <label class="likert_label">Strongly Disagree</label>
-            </li>
-            <li>
-                <input type="radio" name="s2" value=-2>
-                <label class="likert_label">Disagree</label>
-            </li>
-            <li>
-                <input type="radio" name="s2" value=-1>
-                <label class="likert_label">Somewhat Disagree</label>
-            </li>
-            <li>
-                <input type="radio" name="s2" value=0>
-                <label class="likert_label">Neutral</label>
-            </li>
-            <li>
-                <input type="radio" name="s2" value=1>
-                <label class="likert_label">Somewhat Agree</label>
-            </li>
-            <li>
-                <input type="radio" name="s2" value=2>
-                <label class="likert_label">Agree</label>
-            </li>
-            <li>
-                <input type="radio" name="s2" value=3>
-                <label class="likert_label">Strongly Agree</label>
-            </li>
-        </ul>
-        <label class="statement">3. I was the most important team member on the team.</label>
-        <ul class='likert'>
-            <li>
-                <input type="radio" name="s3" value=-3 required="required">
-                <label class="likert_label">Strongly Disagree</label>
-            </li>
-            <li>
-                <input type="radio" name="s3" value=-2>
-                <label class="likert_label">Disagree</label>
-            </li>
-            <li>
-                <input type="radio" name="s3" value=-1>
-                <label class="likert_label">Somewhat Disagree</label>
-            </li>
-            <li>
-                <input type="radio" name="s3" value=0>
-                <label class="likert_label">Neutral</label>
-            </li>
-            <li>
-                <input type="radio" name="s3" value=1>
-                <label class="likert_label">Somewhat Agree</label>
-            </li>
-            <li>
-                <input type="radio" name="s3" value=2>
-                <label class="likert_label">Agree</label>
-            </li>
-            <li>
-                <input type="radio" name="s3" value=3>
-                <label class="likert_label">Strongly Agree</label>
-            </li>
-        </ul>
-        <label class="statement">4. The robot was the most important team member on the team.</label>
-        <ul class='likert'>
-            <li>
-                <input type="radio" name="s4" value=-3 required="required">
-                <label class="likert_label">Strongly Disagree</label>
-            </li>
-            <li>
-                <input type="radio" name="s4" value=-2>
-                <label class="likert_label">Disagree</label>
-            </li>
-            <li>
-                <input type="radio" name="s4" value=-1>
-                <label class="likert_label">Somewhat Disagree</label>
-            </li>
-            <li>
-                <input type="radio" name="s4" value=0>
-                <label class="likert_label">Neutral</label>
-            </li>
-            <li>
-                <input type="radio" name="s4" value=1>
-                <label class="likert_label">Somewhat Agree</label>
-            </li>
-            <li>
-                <input type="radio" name="s4" value=2>
-                <label class="likert_label">Agree</label>
-            </li>
-            <li>
-                <input type="radio" name="s4" value=3>
-                <label class="likert_label">Strongly Agree</label>
-            </li>
-        </ul>
-        <label class="statement">5. I trusted the agent to do the right thing at the right time.</label>
-        <ul class='likert'>
-            <li>
-                <input type="radio" name="s5" value=-3 required="required">
-                <label class="likert_label">Strongly Disagree</label>
-            </li>
-            <li>
-                <input type="radio" name="s5" value=-2>
-                <label class="likert_label">Disagree</label>
-            </li>
-            <li>
-                <input type="radio" name="s5" value=-1>
-                <label class="likert_label">Somewhat Disagree</label>
-            </li>
-            <li>
-                <input type="radio" name="s5" value=0>
-                <label class="likert_label">Neutral</label>
-            </li>
-            <li>
-                <input type="radio" name="s5" value=1>
-                <label class="likert_label">Somewhat Agree</label>
-            </li>
-            <li>
-                <input type="radio" name="s5" value=2>
-                <label class="likert_label">Agree</label>
-            </li>
-            <li>
-                <input type="radio" name="s5" value=3>
-                <label class="likert_label">Strongly Agree</label>
-            </li>
-        </ul>
-        <label class="statement">6. The agent helped me adapt to the task.</label>
-        <ul class='likert'>
-            <li>
-                <input type="radio" name="s6" value=-3 required="required">
-                <label class="likert_label">Strongly Disagree</label>
-            </li>
-            <li>
-                <input type="radio" name="s6" value=-2>
-                <label class="likert_label">Disagree</label>
-            </li>
-            <li>
-                <input type="radio" name="s6" value=-1>
-                <label class="likert_label">Somewhat Disagree</label>
-            </li>
-            <li>
-                <input type="radio" name="s6" value=0>
-                <label class="likert_label">Neutral</label>
-            </li>
-            <li>
-                <input type="radio" name="s6" value=1>
-                <label class="likert_label">Somewhat Agree</label>
-            </li>
-            <li>
-                <input type="radio" name="s6" value=2>
-                <label class="likert_label">Agree</label>
-            </li>
-            <li>
-                <input type="radio" name="s6" value=3>
-                <label class="likert_label">Strongly Agree</label>
-            </li>
-        </ul>
-        <label class="statement">7. I understood what the agent was trying to accomplish.</label>
-        <ul class='likert'>
-            <li>
-                <input type="radio" name="s7" value=-3 required="required">
-                <label class="likert_label">Strongly Disagree</label>
-            </li>
-            <li>
-                <input type="radio" name="s7" value=-2>
-                <label class="likert_label">Disagree</label>
-            </li>
-            <li>
-                <input type="radio" name="s7" value=-1>
-                <label class="likert_label">Somewhat Disagree</label>
-            </li>
-            <li>
-                <input type="radio" name="s7" value=0>
-                <label class="likert_label">Neutral</label>
-            </li>
-            <li>
-                <input type="radio" name="s7" value=1>
-                <label class="likert_label">Somewhat Agree</label>
-            </li>
-            <li>
-                <input type="radio" name="s7" value=2>
-                <label class="likert_label">Agree</label>
-            </li>
-            <li>
-                <input type="radio" name="s7" value=3>
-                <label class="likert_label">Strongly Agree</label>
-            </li>
-        </ul>
-        <label class="statement">8. The agent understood what I was trying to accomplish.</label>
-        <ul class='likert'>
-            <li>
-                <input type="radio" name="s8" value=-3 required="required">
-                <label class="likert_label">Strongly Disagree</label>
-            </li>
-            <li>
-                <input type="radio" name="s8" value=-2>
-                <label class="likert_label">Disagree</label>
-            </li>
-            <li>
-                <input type="radio" name="s8" value=-1>
-                <label class="likert_label">Somewhat Disagree</label>
-            </li>
-            <li>
-                <input type="radio" name="s8" value=0>
-                <label class="likert_label">Neutral</label>
-            </li>
-            <li>
-                <input type="radio" name="s8" value=1>
-                <label class="likert_label">Somewhat Agree</label>
-            </li>
-            <li>
-                <input type="radio" name="s8" value=2>
-                <label class="likert_label">Agree</label>
-            </li>
-            <li>
-                <input type="radio" name="s8" value=3>
-                <label class="likert_label">Strongly Agree</label>
-            </li>
-        </ul>
-        <label class="statement">9. The robot was intelligent.</label>
-        <ul class='likert'>
-            <li>
-                <input type="radio" name="s9" value=-3 required="required">
-                <label class="likert_label">Strongly Disagree</label>
-            </li>
-            <li>
-                <input type="radio" name="s9" value=-2>
-                <label class="likert_label">Disagree</label>
-            </li>
-            <li>
-                <input type="radio" name="s9" value=-1>
-                <label class="likert_label">Somewhat Disagree</label>
-            </li>
-            <li>
-                <input type="radio" name="s9" value=0>
-                <label class="likert_label">Neutral</label>
-            </li>
-            <li>
-                <input type="radio" name="s9" value=1>
-                <label class="likert_label">Somewhat Agree</label>
-            </li>
-            <li>
-                <input type="radio" name="s9" value=2>
-                <label class="likert_label">Agree</label>
-            </li>
-            <li>
-                <input type="radio" name="s9" value=3>
-                <label class="likert_label">Strongly Agree</label>
-            </li>
-        </ul>
-        <label class="statement">10. The agent was cooperative.</label>
-        <ul class='likert'>
-            <li>
-                <input type="radio" name="s10" value=-3 required="required">
-                <label class="likert_label">Strongly Disagree</label>
-            </li>
-            <li>
-                <input type="radio" name="s10" value=-2>
-                <label class="likert_label">Disagree</label>
-            </li>
-            <li>
-                <input type="radio" name="s10" value=-1>
-                <label class="likert_label">Somewhat Disagree</label>
-            </li>
-            <li>
-                <input type="radio" name="s10" value=0>
-                <label class="likert_label">Neutral</label>
-            </li>
-            <li>
-                <input type="radio" name="s10" value=1>
-                <label class="likert_label">Somewhat Agree</label>
-            </li>
-            <li>
-                <input type="radio" name="s10" value=2>
-                <label class="likert_label">Agree</label>
-            </li>
-            <li>
-                <input type="radio" name="s10" value=3>
-                <label class="likert_label">Strongly Agree</label>
-            </li>
-        </ul>
-        <div class="buttons">
-            <button class="clear">Clear</button>
-            <button class="submit">Submit</button>
-        </div>
-    </form>
-
+<div id="survey-container" class="center" style="display:none">
+    <div id="surveyElement" style="display:inline-block;width:100%;"></div>
+    <script type="text/javascript" src="static/js/likert.js"></script>
 </div>
-
 
 <div id="agents-imgs" style="display:none;" class="center">
     <div style="display: inline-block; width: 250px; vertical-align: top;">
@@ -387,12 +73,12 @@
     </div>
 </div>
 
-<div id="control" class="text-center">
-    <button id="next-round" class="text-center">Start Next Round</button>
+<div id="control" class="center">
+    <button id="next-round" class="sd-btn sd-btn--action sd-navigation__complete-btn">Start Next Round</button>
 </div>
 
-<div class="text-center">
-    <button id="end-rounds" class="text-center" style="display:none;">Rank Agents</button>
+<div class="center">
+    <button id="end-rounds" class="sd-btn sd-btn--action sd-navigation__complete-btn" style="display:none;">Rank Agents</button>
 </div>
 
 <noscript>

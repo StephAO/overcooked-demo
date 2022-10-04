@@ -19,15 +19,14 @@
         "tutorialParams" : {
             "layouts" : ["tutorial_3", "tutorial_2", "tutorial_1", "tutorial_0"],
             "playerZero" : "human",
-            "playerOne" : "TutorialAI",
-            "phaseTwoScore" : 34
+            "playerOne" : "TutorialAI"
         },
         "tomato_value" : 13,
         "onion_value" : 21
     },
     "agentComp" : {
         "layouts" : ["counter_circuit_o_1order"],
-        "agents" : ["RandAI", "StayAI"],
+        "agents" : ["oai_sp", "oai_fcp", "oai_hrl"],
         "non_human_colors" : ["red", "green", "orange", "purple"]
     },
     "layout_globals" : {

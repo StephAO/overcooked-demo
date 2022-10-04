@@ -243,9 +243,48 @@ h1 {
 
 .center {
     margin: auto;
-    width: 80%;
-    padding: 25px;
+    width: 90%;
+    padding: 10px;
     text-align: center;
+}
+
+.center-button {
+    border-radius: 4px;
+    text-align: center;
+    color: var(--primary, #19b394);
+    background-color: var(--background, #fff);
+    box-shadow: 0 0 0 2px var(--primary, #19b394);
+    padding: calc(2 * var(--base-unit, 8px)) calc(8 * var(--base-unit, 8px));
+    -webkit-appearance: button;
+    background: var(--background, #fff);
+    border-radius: calc(0.5 * var(--base-unit, 8px));
+    cursor: pointer;
+    font-family: "Open Sans","Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-style: normal;
+    font-weight: 600;
+    font-size: calc(2 * var(--base-unit, 8px));
+    line-height: calc(3 * var(--base-unit, 8px));
+    text-align: center;
+    border: 2px solid rgba(0,0,0,0);
+    outline: none;
+    user-select: none;
+    white-space: pre;
+    align-items: flex-start;
+    box-sizing: border-box;
+    text-rendering: auto;
+    letter-spacing: normal;
+    word-spacing: normal;
+    text-transform: none;
+    text-indent: 0px;
+    text-shadow: none;
+    display: inline-block;
+    -webkit-rtl-ordering: logical;
+    --sd-mobile-width: 600px;
+    --sd-imagepicker-gap: 16px;
+    --sd-base-padding: calc(5 * var(--base-unit, 8px));
+    --sd-base-vertical-padding: calc(4 * var(--base-unit, 8px));
+    --sd-page-vertical-padding: calc(3 * var(--base-unit, 8px));
+    --sv-defaultV2-mark: true;
 }
 
 figure{
@@ -257,5 +296,5 @@ object-fit: none;
 height: 170px;
 }
 
-* {background-color: #c7b299}
+
 html {background-color: #c7b299}

@@ -9,7 +9,7 @@ from overcooked_ai_py.planning.planners import MotionPlanner, NO_COUNTERS_PARAMS
 from oai_agents.agents import load_agent
 from pathlib import Path
 import random, os, pickle, json
-import  numpy as np
+import numpy as np
 import itertools
 import pandas as pd
 
@@ -541,7 +541,7 @@ class OvercookedGame(Game):
         self.threads = []
         for npc_policy in self.npc_policies:
             self.npc_policies[npc_policy].reset()
-            horizon = self.max_time * FPS / self.ticks_per_ai_action # num seconds * 30 fps / frames per agent actions
+            horizon = self.max_time * FPS / self.ticks_per_ai_action  # num seconds * 30 fps / frames per agent actions
             self.npc_policies[npc_policy].set_encoding_params(self.mdp, horizon)
             self.npc_state_queues[npc_policy].put(self.state)
             t = Thread(target=self.npc_policy_consumer, args=(npc_policy,))
@@ -729,6 +729,7 @@ class DummyAI():
     """
     Randomly samples actions. Used for debugging
     """
+
     def set_encoding_params(self, mdp, horizon):
         pass
 
@@ -745,6 +746,7 @@ class DummyComputeAI(DummyAI):
     """
     Performs simulated compute before randomly sampling actions. Used for debugging
     """
+
     def set_encoding_params(self, mdp, horizon):
         pass
 
@@ -777,6 +779,7 @@ class StayAI():
     """
     Always returns "stay" action. Used for debugging
     """
+
     def set_encoding_params(self, mdp, horizon):
         pass
 

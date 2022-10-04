@@ -55,11 +55,9 @@ survey.onComplete.add(function (sender) {
         agent_ranking_by_real_name.push(color_to_name[agent_ranking_by_color[i]]);
     }
     console.log(agent_ranking_by_real_name);
-//    data = JSON.stringify(sender.data, null, 3)
-//    console.log(data);
     socket.emit("submit_ranking", agent_ranking_by_real_name);
-//  document.querySelector('#surveyResult').textContent = "Result JSON:\n" + JSON.stringify(sender.data, null, 3);
-//  console.log(sender.data)
+    $("#surveyElement").hide();
+    $('#completed').show();
 });
 $("#surveyElement").Survey({model: survey});
 

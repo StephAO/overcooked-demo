@@ -6,6 +6,7 @@
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link href="https://unpkg.com/survey-core@1.9.51/defaultV2.min.css" type="text/css" rel="stylesheet"/>
     <style>
       img.center {
         display: block;
@@ -35,7 +36,8 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
   </head>
   <body>
-    <div class="container">
+    <div class="container" style="padding-top: 30px">
+      <h2 class="text-center">Instructions</h2>
       <p class="text-center">
         Hello! In this task, you will be playing a
         cooking game. You will play one of two chefs
@@ -50,9 +52,10 @@
       <p class="text-center">
         This is what one level of the game looks like:
       </p>
-      <img class="center" src="static/images/training0.png" style="width:500px">
+      <img class="center" src="static/images/training0.png" style="width:600px">
       <p class="text-center">
-        There are a number of objects in the game, labeled here:
+        <br>
+        There are a various objects in the game you can interact with. An annotated version of the above image is below:
       </p>
       <img class="center" src="static/images/training0-annotated.png" style="width:800px">
 
@@ -70,7 +73,7 @@
       <p class="text-center">
         You can interact with objects by facing them and pressing
         <b>spacebar</b>. Here are some examples:
-        <ul>
+        <ul style="margin-left: 12%;">
           <li>You can pick up onions by facing an onion dispenser or an onion on
             a counter and pressing <b>spacebar</b>.</li>
           <li>If you are holding an onion and are facing an empty counter,
@@ -80,7 +83,6 @@
         </ul>
       </p>
 
-      <br>
       <br>
       <p class="text-center">
         Note that as you and your partner are moving around the kitchen
@@ -108,40 +110,16 @@
       <hr>
       <br>
 
-      <h3 class="text-center">Serving</h3>
-      <img class="center" src="static/images/serving-counter.png" style="width:800px">
-      <p class="text-center">
-        Once the soup is in a bowl, you can serve it by bringing it to
-        a grey serving counter.
-      </p>
-
-      <br>
-      <hr>
-      <br>
-
-      <br>
-      <hr>
-      <br>
-
-      <h3 class="text-center">Score</h3>
-      <p class="text-center">
-        When a soup is served at the serving counter, 20 points are added to your score.
-      </p>
-
-      <br>
-      <hr>
-      <br>
-
       <h3 class="text-center">Goal</h3>
       <p class="text-center">
-        Your goal in this task is to serve as many soups as you can
-        before each level ends.
+        The team will be awarded 20 points for each soup served.
+        Your goal in this task is to serve as many soups as you can before each level ends.
       </p>
-
+      <div id="control" class="text-center">
+        <button class="sd-btn sd-btn--action sd-navigation__complete-btn" onclick="location.href='./tutorial';">Go to Tutorial</button>
+      </div>
       <br>
-      <hr>
       <br>
-      <button class="text-center" onclick="location.href='./tutorial';">Go to Tutorial</button>
     </div>
   </body>
 </html>
