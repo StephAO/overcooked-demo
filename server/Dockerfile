@@ -17,7 +17,7 @@ RUN if [ "$BUILD_ENV" = "production" ] ; then pip install eventlet ; fi
 # Clone oai_agents code
 RUN git clone https://github.com/StephAO/overcooked_ai.git --branch $OVERCOOKED_BRANCH --single-branch /overcooked_ai
 # TODO - remove personal auth token
-RUN git clone https://<yourgithubtoken>@github.com/StephAO/oai_agents.git --branch $AGENT_BRANCH --single-branch /oai_agents
+RUN git clone https://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@github.com/StephAO/oai_agents.git --branch $AGENT_BRANCH --single-branch /oai_agents
 
 # Is this necessary?
 # Dummy data_dir so things don't break
