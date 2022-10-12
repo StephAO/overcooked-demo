@@ -18,13 +18,13 @@ const shuffleArray = (array) => {
 
 var agents = [];
 var layouts = [];
-var human_color = 'blue';
+var human_color = 'grey';
 var agent_colors = {};
 var agent_layouts = null;
 
 
 // Read in game config provided by server
-$(function() {
+const get_random_layouts = () => {
     config = JSON.parse($('#config').text());
     console.log(config)
     for(i = 0; i < config['agents'].length; i++) {
@@ -36,7 +36,7 @@ $(function() {
     shuffleArray(agent_layouts);
     console.log(agent_layouts);
     $('#quit').show();
-});
+};
 
 /* * * * * * * * * * * * * * * * 
  * Button click event handlers *
@@ -64,7 +64,7 @@ $(function() {
                 "playerZero" : "human",
                 "playerOne" : agent_layouts[round][0],
                 "layouts" : [agent_layouts[round][1]],
-                "gameTime" : 60,
+                "gameTime" : 5,
                 "randomized" : false
             },
             "game_name" : "overcooked"
@@ -184,13 +184,13 @@ function disable_key_listener() {
  * * * * * * * * * * * */
 
 socket.on("connect", function() {
-    console.log("SRC: ", `static/assets/${agent_colors[agent_layouts[round][0]]}_chef.png`)
-    $("#teammate-img").attr('src', `\static/assets/${agent_colors[agent_layouts[round][0]]}_chef.png`);
-    $('#teammate-desc').text(`This is agent ${agent_colors[agent_layouts[round][0]]}. They will be your teammate for the next round.`);
+    get_random_layouts();
     $('#next-round').text(`Start Next Round`);
     $('#next-round').show();
     $('#game-title').text(`Round ${round + 1} / ${agent_layouts.length}`);
     $('#game-title').show();
+    $("#teammate-img").attr('src', `\static/assets/${agent_colors[agent_layouts[round][0]]}_chef.png`);
+    $('#teammate-desc').text(`This is agent ${agent_colors[agent_layouts[round][0]]}. They will be your teammate for the next round.`);
     $('#agents-imgs').show();
 });
 
