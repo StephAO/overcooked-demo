@@ -100,15 +100,10 @@ var survey_css = {
 window.survey = new Survey.Model(json);
 survey.onComplete.add(function (sender) {
     event.preventDefault();
-    console.log(sender.data)
-    console.log(agent_layouts[round][0])
-    console.log(agent_layouts[round][1])
-    console.log(round_score)
     let likert_scores = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
     for (let i = 0; i < 10; i++) {
         likert_scores[i] = sender.data["likert"][`q${i + 1}`];
     }
-    console.log(likert_scores);
     let data = {
         "agent_name" : agent_layouts[round][0],
         "layout_name" : agent_layouts[round][1],

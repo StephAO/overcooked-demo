@@ -104,7 +104,6 @@ class OvercookedScene extends Phaser.Scene {
     }
 
     set_state(state) {
-        console.log(this.hud_data);
         this.hud_data.potential = state.potential;
         this.hud_data.score = state.score;
         this.hud_data.time = Math.round(state.time_left);
@@ -366,7 +365,6 @@ class OvercookedScene extends Phaser.Scene {
             this._drawAgentMsg(hud_data.agent_msg, sprites, board_height);
         }
         if (typeof(hud_data.potential) !== 'undefined' && hud_data.potential !== null) {
-            console.log(hud_data.potential)
             this._drawPotential(hud_data.potential, sprites, board_height);
         }
     }

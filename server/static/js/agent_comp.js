@@ -32,7 +32,6 @@ const get_random_layouts = () => {
     }
     agent_layouts = cartesian(config['agents'], config['layouts']);
     let copy_al = agent_layouts.slice()
-    console.log(copy_al);
     shuffleArray(agent_layouts);
     console.log(agent_layouts);
     $('#quit').show();
@@ -93,7 +92,6 @@ socket.on('creation_failed', function(data) {
 });
 
 socket.on('start_game', function(data) {
-    console.log('Game start done')
     graphics_config = {
         container_id : "overcooked",
         start_info : data.start_info
@@ -108,7 +106,6 @@ socket.on('start_game', function(data) {
     $('#agents-imgs').hide();
     enable_key_listener();
     graphics_start(graphics_config);
-    console.log('Game start done')
 });
 
 socket.on('state_pong', function(data) {
@@ -117,14 +114,12 @@ socket.on('state_pong', function(data) {
 });
 
 socket.on('end_game', function(data) {
-    console.log("????")
     $('#game-title').hide();
     // Hide game data and display game-over html
     graphics_end();
     disable_key_listener();
     round_score = data['data'].score
-    console.log(round_score)
-    
+
     if (data.status === 'inactive') {
         // Game ended unexpectedly
         $('#error-exit').show();
