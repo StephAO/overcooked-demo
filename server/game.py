@@ -394,6 +394,7 @@ class OvercookedGame(Game):
         self.max_time = min(int(gameTime), MAX_GAME_TIME)
         self.npc_policies = {}
         self.npc_state_queues = {}
+        self.npc_prev_states = {}
         self.action_to_overcooked_action = {
             "STAY": Action.STAY,
             "UP": Direction.NORTH,
@@ -406,6 +407,7 @@ class OvercookedGame(Game):
         self.curr_tick = 0
         self.human_players = set()
         self.npc_players = set()
+        self.agent_msg = ' '
 
         if randomized:
             random.shuffle(self.layouts)
@@ -415,12 +417,14 @@ class OvercookedGame(Game):
             self.add_player(player_zero_id, idx=0, buff_size=1, is_human=False)
             self.npc_policies[player_zero_id] = self.get_policy(playerZero, idx=0)
             self.npc_state_queues[player_zero_id] = LifoQueue()
+            self.npc_prev_states[player_zero_id] = None
 
         if playerOne != 'human':
             player_one_id = playerOne + '_1'
             self.add_player(player_one_id, idx=1, buff_size=1, is_human=False)
             self.npc_policies[player_one_id] = self.get_policy(playerOne, idx=1)
             self.npc_state_queues[player_one_id] = LifoQueue()
+            self.npc_prev_states[player_one_id] = None
 
     def _curr_game_over(self):
         return time() - self.start_time >= self.max_time
@@ -449,11 +453,18 @@ class OvercookedGame(Game):
         print('NPC policy consumer', flush=True)
         queue = self.npc_state_queues[policy_id]
         policy = self.npc_policies[policy_id]
+        stale = 0
         while self._is_active:
+            stale += 1
             state = queue.get()
-            npc_action, _ = policy.action(state)
-            print(f'Action: {npc_action}', flush=True)
+            if state.players == self.npc_prev_states[policy_id] and stale < 3:
+                continue
+            self.npc_prev_states[policy_id] = state.players
+            npc_action, agent_msg = policy.action(state, deterministic=False)
+            if agent_msg != ' ':
+                self.agent_msg = agent_msg
             super(OvercookedGame, self).enqueue_action(policy_id, npc_action)
+            stale = 0
 
     def is_full(self):
         return self.num_players >= self.max_players
@@ -567,6 +578,7 @@ class OvercookedGame(Game):
         state_dict['state'] = self.state.to_dict()
         state_dict['score'] = self.score
         state_dict['time_left'] = max(self.max_time - (time() - self.start_time), 0)
+        state_dict['agent_msg'] = self.agent_msg
         return state_dict
 
     def to_json(self):
@@ -585,6 +597,7 @@ class OvercookedGame(Game):
                 print(f'Loaded agent: {agent}', flush=True)
                 return agent
             except Exception as e:
+                print('???', e, flush=True)
                 raise IOError(f"{fpath}, Error loading OAI Agent\n{e}")
         else:
             try:
@@ -779,7 +792,6 @@ class StayAI():
     """
     Always returns "stay" action. Used for debugging
     """
-
     def set_encoding_params(self, mdp, horizon):
         pass
 
@@ -833,6 +845,7 @@ class TutorialAI():
 
         # Deliver soup
         Action.INTERACT,
+        Action.INTERACT,
         Direction.EAST,
         Direction.EAST,
         Direction.EAST,
@@ -872,13 +885,13 @@ class TutorialAI():
         self.curr_phase = -1
         self.curr_tick = -1
 
-    def action(self, state):
+    def action(self, state, deterministic=False):
         self.curr_tick += 1
         if self.curr_phase == 0:
-            return self.COOK_SOUP_LOOP[self.curr_tick % len(self.COOK_SOUP_LOOP)], None
+            return self.COOK_SOUP_LOOP[self.curr_tick % len(self.COOK_SOUP_LOOP)], 'I am cooking soups.'
         elif self.curr_phase == 2:
-            return self.COOK_SOUP_COOP_LOOP[self.curr_tick % len(self.COOK_SOUP_COOP_LOOP)], None
-        return Action.STAY, None
+            return self.COOK_SOUP_COOP_LOOP[self.curr_tick % len(self.COOK_SOUP_COOP_LOOP)], 'I am cooking soups.'
+        return Action.STAY, 'I am cooking soups.'
 
     def reset(self):
         self.curr_tick = -1

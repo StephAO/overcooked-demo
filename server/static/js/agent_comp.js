@@ -18,7 +18,7 @@ const shuffleArray = (array) => {
 
 var agents = [];
 var layouts = [];
-var human_color = 'grey';
+var human_color = 'blue';
 var agent_colors = {};
 var agent_layouts = null;
 
@@ -64,7 +64,7 @@ $(function() {
                 "playerZero" : "human",
                 "playerOne" : agent_layouts[round][0],
                 "layouts" : [agent_layouts[round][1]],
-                "gameTime" : 5,
+                "gameTime" : 80,
                 "randomized" : false
             },
             "game_name" : "overcooked"
@@ -72,7 +72,7 @@ $(function() {
         $('#next-round').hide();
         console.log("agent images should be hidden")
         $('#agents-imgs').hide();
-        setAgentColors({0: human_color, 1: agent_colors[agent_layouts[round][0]]},)
+        setAgentColors({0: human_color, 1: agent_colors[agent_layouts[round][0]]})
         // create (or join if it exists) new game
         socket.emit("create", data);
     });

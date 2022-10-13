@@ -24,7 +24,7 @@ var scene_config = {
     show_post_cook_time : false,
     cook_time : 20,
     assets_loc : "./static/assets/",
-    hud_size : 60
+    hud_size : 85
 };
 
 var game_config = {
@@ -97,15 +97,18 @@ class OvercookedScene extends Phaser.Scene {
             potential : config.start_state.potential,
             score : config.start_state.score,
             time : config.start_state.time_left,
+            agent_msg : ' ',
             bonus_orders : config.start_state.state.bonus_orders,
             all_orders : config.start_state.state.all_orders
         }
     }
 
     set_state(state) {
+        console.log(this.hud_data);
         this.hud_data.potential = state.potential;
         this.hud_data.score = state.score;
         this.hud_data.time = Math.round(state.time_left);
+        this.hud_data.agent_msg = state.agent_msg;
         this.hud_data.bonus_orders = state.state.bonus_orders;
         this.hud_data.all_orders = state.state.all_orders;
         this.state = state.state;
@@ -359,6 +362,9 @@ class OvercookedScene extends Phaser.Scene {
         if (typeof(hud_data.score) !== 'undefined') {
             this._drawScore(hud_data.score, sprites, board_height);
         }
+        if (typeof(hud_data.agent_msg) !== 'undefined') {
+            this._drawAgentMsg(hud_data.agent_msg, sprites, board_height);
+        }
         if (typeof(hud_data.potential) !== 'undefined' && hud_data.potential !== null) {
             console.log(hud_data.potential)
             this._drawPotential(hud_data.potential, sprites, board_height);
@@ -445,6 +451,23 @@ class OvercookedScene extends Phaser.Scene {
         }
     }
 
+    _drawAgentMsg(agent_msg, sprites, board_height) {
+        agent_msg = "Agent msg: "+agent_msg;
+        if (typeof(sprites['agent_msg']) !== 'undefined') {
+            sprites['agent_msg'].setText(agent_msg);
+        }
+        else {
+            sprites['agent_msg'] = this.add.text(
+                5, board_height + 5, agent_msg,
+                {
+                    font: "20px Arial",
+                    fill: "red",
+                    align: "left"
+                }
+            )
+        }
+    }
+
     _drawScore(score, sprites, board_height) {
         score = "Score: "+score;
         if (typeof(sprites['score']) !== 'undefined') {
@@ -452,7 +475,7 @@ class OvercookedScene extends Phaser.Scene {
         }
         else {
             sprites['score'] = this.add.text(
-                5, board_height, score,
+                5, board_height + 30, score,
                 {
                     font: "20px Arial",
                     fill: "red",
@@ -486,7 +509,7 @@ class OvercookedScene extends Phaser.Scene {
         }
         else {
             sprites['time_left'] = this.add.text(
-                5, board_height + 25, time_left,
+                5, board_height + 55, time_left,
                 {
                     font: "20px Arial",
                     fill: "red",
