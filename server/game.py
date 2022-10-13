@@ -844,7 +844,8 @@ class TutorialAI():
         Direction.NORTH,
 
         # Deliver soup
-        Action.INTERACT,
+        Action.STAY,
+        Action.STAY,
         Action.INTERACT,
         Direction.EAST,
         Direction.EAST,
