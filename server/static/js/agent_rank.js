@@ -47,8 +47,6 @@ window.survey = new Survey.Model(json);
 
 survey.onComplete.add(function (sender) {
     event.preventDefault();
-    console.log(sender.data);
-    console.log(sender.data["Agent Ranking"]);
     let agent_ranking_by_color = sender.data["Agent Ranking"];
     let agent_ranking_by_real_name = [];
     for (let i = 0; i < agent_ranking_by_color.length; i++) {
