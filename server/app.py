@@ -269,21 +269,17 @@ def _create_game(user_id, game_name, params={}):
         return
     spectating = True
     with game.lock:
-        print('WHAT', game.is_full(), flush=True)
         if not game.is_full():
             spectating = False
-            game.add_player(user_id)
+            game.add_player(user_id, buff_size=3)
         else:
             spectating = True
             game.add_spectator(user_id)
-        print('ARE', flush=True)
         join_room(game.id)
         set_curr_room(user_id, game.id)
-        print('WE', game.is_ready(), flush=True)
         if game.is_ready():
             game.activate()
             ACTIVE_GAMES.add(game.id)
-            print('WHAT ARE WE DOING?', flush=True)
             emit('start_game', { "spectating" : spectating, "start_info" : game.to_json()}, room=game.id)
             socketio.start_background_task(play_game, game, fps=MAX_FPS)
         else:
@@ -510,7 +506,7 @@ def on_action(data):
     game = get_curr_game(user_id)
     if not game:
         return
-    
+
     game.enqueue_action(user_id, action)
 
 

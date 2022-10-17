@@ -190,7 +190,7 @@ class Game(ABC):
             return
         try:
             player_idx = self.players.index(player_id)
-            self.pending_actions[player_idx].put(action)
+            self.pending_actions[player_idx].put(action, block=False)
         except Full:
             pass
 
@@ -215,7 +215,7 @@ class Game(ABC):
         """
         return not self.num_players
 
-    def add_player(self, player_id, idx=None, buff_size=-1):
+    def add_player(self, player_id, idx=None, buff_size=1):
         """
         Add player_id to the game
         """
@@ -414,16 +414,16 @@ class OvercookedGame(Game):
 
         if playerZero != 'human':
             player_zero_id = playerZero + '_0'
-            self.add_player(player_zero_id, idx=0, buff_size=1, is_human=False)
+            self.add_player(player_zero_id, idx=0, buff_size=3, is_human=False)
             self.npc_policies[player_zero_id] = self.get_policy(playerZero, idx=0)
-            self.npc_state_queues[player_zero_id] = LifoQueue()
+            self.npc_state_queues[player_zero_id] = Queue(maxsize=3)
             self.npc_prev_states[player_zero_id] = None
 
         if playerOne != 'human':
             player_one_id = playerOne + '_1'
-            self.add_player(player_one_id, idx=1, buff_size=1, is_human=False)
+            self.add_player(player_one_id, idx=1, buff_size=3, is_human=False)
             self.npc_policies[player_one_id] = self.get_policy(playerOne, idx=1)
-            self.npc_state_queues[player_one_id] = LifoQueue()
+            self.npc_state_queues[player_one_id] = Queue(maxsize=3)
             self.npc_prev_states[player_one_id] = None
 
     def _curr_game_over(self):
@@ -432,7 +432,7 @@ class OvercookedGame(Game):
     def needs_reset(self):
         return self._curr_game_over() and not self.is_finished()
 
-    def add_player(self, player_id, idx=None, buff_size=-1, is_human=True):
+    def add_player(self, player_id, idx=None, buff_size=1, is_human=True):
         super(OvercookedGame, self).add_player(player_id, idx=idx, buff_size=buff_size)
         if is_human:
             self.human_players.add(player_id)
@@ -450,7 +450,6 @@ class OvercookedGame(Game):
                 raise ValueError("Inconsistent state")
 
     def npc_policy_consumer(self, policy_id):
-        print('NPC policy consumer', flush=True)
         queue = self.npc_state_queues[policy_id]
         policy = self.npc_policies[policy_id]
         stale = 0
@@ -461,6 +460,7 @@ class OvercookedGame(Game):
                 continue
             self.npc_prev_states[policy_id] = state.players
             npc_action, agent_msg = policy.action(state, deterministic=False)
+
             if agent_msg != ' ':
                 self.agent_msg = agent_msg
             super(OvercookedGame, self).enqueue_action(policy_id, npc_action)
@@ -509,7 +509,7 @@ class OvercookedGame(Game):
         # Send next state to all background consumers if needed
         if self.curr_tick % self.ticks_per_ai_action == 0:
             for npc_id in self.npc_policies:
-                self.npc_state_queues[npc_id].put(self.state, block=False)
+                self.npc_state_queues[npc_id].put(self.state)
 
         # Update score based on soup deliveries that might have occured
         curr_reward = sum(info['sparse_reward_by_agent'])
@@ -594,10 +594,8 @@ class OvercookedGame(Game):
                 fpath = AGENT_DIR / npc_id
                 agent = load_agent(fpath)
                 agent.set_idx(p_idx=idx)
-                print(f'Loaded agent: {agent}', flush=True)
                 return agent
             except Exception as e:
-                print('???', e, flush=True)
                 raise IOError(f"{fpath}, Error loading OAI Agent\n{e}")
         else:
             try:
