@@ -73,7 +73,7 @@ var json = {
             }
           ],
           "alternateRows": true,
-          "isAllRowRequired": true
+//          "isAllRowRequired": true
         }
       ]
     },
@@ -97,37 +97,38 @@ var survey_css = {
 
 };
 
-window.survey = new Survey.Model(json);
-survey.onComplete.add(function (sender) {
-    event.preventDefault();
+likert_survey = new Survey.Model(json);
+likert_survey.onComplete.add(function (sender) {
     let likert_scores = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
     for (let i = 0; i < 10; i++) {
         likert_scores[i] = sender.data["likert"][`q${i + 1}`];
     }
     let data = {
-        "agent_name" : agent_layouts[round][0],
-        "layout_name" : agent_layouts[round][1],
+        "agent_name" : agent_order[curr_agent_idx],
+        "layout_name" : layout_order[curr_layout_idx],
         "likert_scores" : likert_scores.toString(),
         "round_score" : round_score
     };
-
-    round++;
-
-    if (round >= agent_layouts.length) {
-        $('#survey-container').hide();
-        $('#next-round').hide();
-        $('#agents-imgs').hide();
-        $('#end-rounds').show()
-    } else {
-        $('#survey-container').hide();
-        $('#agents-imgs').show();
-        $("#teammate-img").attr('src', `\static/assets/${agent_colors[agent_layouts[round][0]]}_chef.png`);
-        $('#teammate-desc').text(`This is agent ${agent_colors[agent_layouts[round][0]]}. They will be your teammate for the next round.`);
-        $('#next-round').text(`Start Next Round`);
-        $('#next-round').show();
-    }
     socket.emit("submit_survey", data);
-    window.survey.clear(true, true);
+    likert_survey.clear(true, true);
+    $('#surveyElement').hide();
+    agent_color_name = 'agent ' + name_to_color[agent_order[curr_agent_idx]];
+    var new_agent = new Survey.ItemValue(agent_order[curr_agent_idx], agent_color_name);
+    console.log(new_agent);
+    ranking_survey.pages[0].elements[0].choices.push(new_agent);
+    // Setup agent ordering
+    el_id = `#agent-${curr_agent_idx+1}`;
+    $(el_id+"-img").attr('src', `\static/assets/${name_to_color[agent_order[curr_agent_idx]]}_chef (1).png`);
+    $(el_id+"-dsc").text(`${curr_agent_idx+1}. agent ${name_to_color[agent_order[curr_agent_idx]]}`);
+    $(el_id).show();
+    // Rank only if there's enough agents to do so
+    if (ranking_survey.pages[0].elements[0].choices.length < 2) {
+        setup_next_round();
+    } else {
+        $('#rankingElement').show();
+
+        $('#agents-ordering').show();
+    }
 });
-$("#surveyElement").Survey({model: survey, css: survey_css});
+$("#surveyElement").Survey({model: likert_survey, css: survey_css});
 

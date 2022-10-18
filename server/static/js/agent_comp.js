@@ -1,14 +1,30 @@
 // Persistent network connection that will be used to transmit real-time data
 var socket = io();
 
-var config;
+var config = JSON.parse($('#config').text());
 
-var round = 0;
+var curr_agent_idx = 0;
+var curr_layout_idx = -1;
+var round_num = -1
+var tot_rounds = -1
 var round_score = -1;
+var agent_order = [];
+var layout_order = [];
+var name_to_color = {};
+var color_to_name = {};
+var human_color = 'blue';
+var layout_order_has_been_set = false;
+
+
+(() => {
+    for(i = 0; i < config['agents'].length; i++) {
+        name_to_color[config['agents'][i]] = (config['non_human_colors'][i]);
+        color_to_name[config['non_human_colors'][i]] = config['agents'][i];
+    }
+    console.log(name_to_color)
+})();
 
 const cartesian = (...a) => a.reduce((a, b) => a.flatMap(d => b.map(e => [d, e].flat())));
-
-
 const shuffleArray = (array) => {
     for (let i = array.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
@@ -16,26 +32,48 @@ const shuffleArray = (array) => {
     }
 }
 
-var agents = [];
-var layouts = [];
-var human_color = 'blue';
-var agent_colors = {};
-var agent_layouts = null;
-var array_has_been_shuffled = false;
-
-
-// Read in game config provided by server
-const get_random_layouts = () => {
-    config = JSON.parse($('#config').text());
-    console.log(config)
-    for(i = 0; i < config['agents'].length; i++) {
-        agent_colors[config['agents'][i]] = config['non_human_colors'][i]
-    }
-    agent_layouts = cartesian(config['agents'], config['layouts']);
-    shuffleArray(agent_layouts);
-    console.log(agent_layouts);
-    $('#quit').show();
+const set_layout_order = () => {
+    layout_order = config['layouts']
+    shuffleArray(layout_order);
+    console.log(layout_order);
 };
+
+const setup_next_round = () => {
+    curr_agent_idx++;
+    if (curr_agent_idx >= agent_order.length) {
+        agent_order = config['agents'];
+        shuffleArray(agent_order);
+        curr_agent_idx = 0;
+        curr_layout_idx++;
+        for (let i = 1; i <= 5; i++) {
+            el_id = `#agent-${i+1}`;
+            $(el_id).hide();
+        }
+        $('#new-layout').text(`New Layout (${curr_layout_idx + 1}/${layout_order.length})!`);
+        $('#new-layout').show();
+    }
+
+    round_num = curr_layout_idx * config['layouts'].length + curr_agent_idx + 1;
+    tot_rounds = config['agents'].length * config['layouts'].length;
+
+    console.log("SNR", curr_layout_idx, layout_order.length, '-', curr_agent_idx, agent_order.length)
+    $("#rankingElement").hide();
+    $('#agents-ordering').hide();
+    if (curr_layout_idx >= layout_order.length) {
+        $('#start-next-round').hide();
+        $('#agents-imgs').hide();
+        $('#end-rounds').show()
+    } else {
+        $('#game-title').text(`Round ${round_num} / ${tot_rounds}`);
+        $('#game-title').show();
+        $("#teammate-img").attr('src', `\static/assets/${name_to_color[agent_order[curr_agent_idx]]}_chef (1).png`);
+        $('#teammate-desc').text(`This is agent ${name_to_color[agent_order[curr_agent_idx]]}. They will be your teammate for the next round.`);
+        $('#agents-imgs').show();
+        $('#start-next-round').text(`Start Next Round`);
+        $('#start-next-round').show();
+    }
+};
+
 
 /* * * * * * * * * * * * * * * * 
  * Button click event handlers *
@@ -56,22 +94,23 @@ $(function() {
 });
 
 $(function() {
-    $('#next-round').click(function() {
+    $('#start-next-round').click(function() {
         // Config for this specific game
         let data = {
             "params" : {
                 "playerZero" : "human",
-                "playerOne" : agent_layouts[round][0],
-                "layouts" : [agent_layouts[round][1]],
-                "gameTime" : 80,
+                "playerOne" : agent_order[curr_agent_idx],
+                "layouts" : [layout_order[curr_layout_idx]],
+                "gameTime" : 5,
                 "randomized" : false
             },
             "game_name" : "overcooked"
         };
-        $('#next-round').hide();
+        $('#start-next-round').hide();
         console.log("agent images should be hidden")
         $('#agents-imgs').hide();
-        setAgentColors({0: human_color, 1: agent_colors[agent_layouts[round][0]]})
+        $('#new-layout').hide()
+        setAgentColors({0: human_color, 1: name_to_color[agent_order[curr_agent_idx]]})
         // create (or join if it exists) new game
         socket.emit("create", data);
     });
@@ -98,10 +137,10 @@ socket.on('start_game', function(data) {
     };
     $("#overcooked").empty();
     $('#game-over').hide();
-    $('#next-round').hide();
-    $('#game-title').text(`Round ${round + 1} / ${agent_layouts.length}`);
+    $('#start-next-round').hide();
+    $('#game-title').text(`Round ${round_num} / ${tot_rounds}`);
     $('#game-title').show();
-    $('#survey-container').hide();
+    $('#surveyElement').hide();
     $('#overcooked-container').show();
     $('#agents-imgs').hide();
     enable_key_listener();
@@ -114,8 +153,8 @@ socket.on('state_pong', function(data) {
 });
 
 socket.on('end_game', function(data) {
-    $('#game-title').hide();
-    // Hide game data and display game-over html
+//    $('#game-title').hide();
+    // Hide game data and display survey html
     graphics_end();
     disable_key_listener();
     round_score = data['data'].score
@@ -130,7 +169,8 @@ socket.on('end_game', function(data) {
         window.top.postMessage({ name : "tutorial-done" }, "*");
     }
     $('#overcooked-container').hide();
-    $('#survey-container').show();
+    console.log("Should show survey container")
+    $('#surveyElement').show();
 });
 
 /* * * * * * * * * * * * * * 
@@ -179,17 +219,11 @@ function disable_key_listener() {
  * * * * * * * * * * * */
 
 socket.on("connect", function() {
-    if (!array_has_been_shuffled) {
-        get_random_layouts();
-        array_has_been_shuffled = true;
+    if (!layout_order_has_been_set) {
+        set_layout_order();
+        layout_order_has_been_set = true;
     }
-    $('#next-round').text(`Start Next Round`);
-    $('#next-round').show();
-    $('#game-title').text(`Round ${round + 1} / ${agent_layouts.length}`);
-    $('#game-title').show();
-    $("#teammate-img").attr('src', `\static/assets/${agent_colors[agent_layouts[round][0]]}_chef.png`);
-    $('#teammate-desc').text(`This is agent ${agent_colors[agent_layouts[round][0]]}. They will be your teammate for the next round.`);
-    $('#agents-imgs').show();
+    setup_next_round();
 });
 
 

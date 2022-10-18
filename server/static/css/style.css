@@ -292,9 +292,25 @@ figure{
 }
 
 .agent_img{
-object-fit: none;
-height: 170px;
+    object-fit: none;
+    height: 180px;
 }
+
+.agent_img_mini{
+    max-width:90%;
+    max-height:90%;
+}
+
+.mini_agent_img_div{
+    display: inline-block;
+    width: 130px;
+    vertical-align: top;
+    object-fit: contain;
+    margin-right: 10px;
+    margin-left: 10px;
+}
+
+
 
 
 html {background-color: #c7b299}

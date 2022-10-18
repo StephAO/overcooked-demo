@@ -534,12 +534,12 @@ def on_disconnect():
 @socketio.on('submit_survey')
 def on_connect(data):
     print(type(data), data, flush=True)
-    airtable_base.create('tblaCbOjLcQqpNGMF', data)
+    # airtable_base.create('tblaCbOjLcQqpNGMF', data)
 
 @socketio.on('submit_ranking')
 def on_connect(data):
     print(type(data), data, flush=True)
-    airtable_base.create('tblxp2qGubm69vH82', {'ordered_agents': json.dumps(data)})
+    # airtable_base.create('tblxp2qGubm69vH82', {'ordered_agents': json.dumps(data)})
 
 # Exit handler for server
 def on_exit():
