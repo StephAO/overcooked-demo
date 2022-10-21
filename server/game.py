@@ -7,6 +7,7 @@ from overcooked_ai_py.mdp.overcooked_env import OvercookedEnv
 from overcooked_ai_py.mdp.actions import Action, Direction
 from overcooked_ai_py.planning.planners import MotionPlanner, NO_COUNTERS_PARAMS
 from oai_agents.agents import load_agent
+from oai_agents.common.subtasks import calculate_completed_subtask
 from pathlib import Path
 import random, os, pickle, json
 import numpy as np
@@ -408,6 +409,8 @@ class OvercookedGame(Game):
         self.human_players = set()
         self.npc_players = set()
         self.agent_msg = ' '
+        self.subtasks_completed = {playerZero: [], playerOne: []}
+        self.player_names = [playerZero, playerOne]
 
         if randomized:
             random.shuffle(self.layouts)
@@ -503,8 +506,10 @@ class OvercookedGame(Game):
         # Apply overcooked game logic to get state transition
         prev_state = self.state
         self.state, info = self.mdp.get_state_transition(prev_state, joint_action)
-        if self.show_potential:
-            self.phi = self.mdp.potential_function(prev_state, self.mp, gamma=0.99)
+        for i, player_name in enumerate(self.player_names):
+            subtask_comp = calculate_completed_subtask(self.mdp.terrain_mtx, prev_state, self.state, i)
+            if subtask_comp is not None:
+                self.subtasks_completed[player_name].append( (self.curr_tick, subtask_comp) )
 
         # Send next state to all background consumers if needed
         if self.curr_tick % self.ticks_per_ai_action == 0:
@@ -609,7 +614,7 @@ class OvercookedGame(Game):
         """
         Return any game metadata to server driver. Really only relevant for Psiturk code
         """
-        return {'score': self.score}
+        return {'score': self.score, 'subtask_completion': json.dumps(self.subtasks_completed)}
 
 
 class OvercookedPsiturk(OvercookedGame):
@@ -844,6 +849,8 @@ class TutorialAI():
         # Deliver soup
         Action.STAY,
         Action.STAY,
+        Action.INTERACT,
+        Action.INTERACT,
         Action.INTERACT,
         Direction.EAST,
         Direction.EAST,

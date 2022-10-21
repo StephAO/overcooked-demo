@@ -107,7 +107,11 @@ likert_survey.onComplete.add(function (sender) {
         "agent_name" : agent_order[curr_agent_idx],
         "layout_name" : layout_order[curr_layout_idx],
         "likert_scores" : likert_scores.toString(),
-        "round_score" : round_score
+        "round_score" : round_score,
+        "subtask_completion": human_sb_comp,
+        "PID": PID,
+        "SESSION_ID": SESS_ID,
+        "STUDY_ID": STUDY_ID,
     };
     socket.emit("submit_survey", data);
     likert_survey.clear(true, true);
@@ -118,7 +122,7 @@ likert_survey.onComplete.add(function (sender) {
     ranking_survey.pages[0].elements[0].choices.push(new_agent);
     // Setup agent ordering
     el_id = `#agent-${curr_agent_idx+1}`;
-    $(el_id+"-img").attr('src', `\static/assets/${name_to_color[agent_order[curr_agent_idx]]}_chef (1).png`);
+    $(el_id+"-img").attr('src', `\static/assets/${name_to_color[agent_order[curr_agent_idx]]}_chef.png`);
     $(el_id+"-dsc").text(`${curr_agent_idx+1}. agent ${name_to_color[agent_order[curr_agent_idx]]}`);
     $(el_id).show();
     // Rank only if there's enough agents to do so
@@ -126,7 +130,6 @@ likert_survey.onComplete.add(function (sender) {
         setup_next_round();
     } else {
         $('#rankingElement').show();
-
         $('#agents-ordering').show();
     }
 });

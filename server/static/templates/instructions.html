@@ -36,12 +36,12 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
   </head>
   <body>
-    <div class="container" style="padding-top: 30px">
+    <div class="container" style="padding-top: 30px; max-width: 600px;">
       <h2 class="text-center">Instructions</h2>
-      <p class="text-center">
-        Hello! In this task, you will be playing a
-        cooking game. You will play one of two chefs
-        in a restaurant that serves onion soups.
+      <p class="inst_left_text">
+        Hello! <br>
+        In this survey you will be playing a cooperative cooking game. <br>
+        You will play one of two chefs in a restaurant that serves onion soups.
       </p>
 
       <br>
@@ -49,15 +49,16 @@
       <br>
 
       <h3 class="text-center">Layouts</h3>
-      <p class="text-center">
-        This is what one level of the game looks like:
+      <p class="inst_left_text">
+        This is what a level of the game looks like:
       </p>
-      <img class="center" src="static/images/training0.png" style="width:600px">
-      <p class="text-center">
+      <img class="center" src="static/images/training0.png" style="height:450px;">
+      <p class="inst_left_text">
         <br>
-        There are a various objects in the game you can interact with. An annotated version of the above image is below:
+        The image below labels each different component of the game. Note that the dark brown tiles are counters that
+        you can place objects on (but cannot walk on), and the light beige tiles are floor tiles.
       </p>
-      <img class="center" src="static/images/training0-annotated.png" style="width:800px">
+      <img class="center" src="static/images/training0-annotated.png" style="height:450px;">
 
       <br>
       <hr>
@@ -65,28 +66,32 @@
 
       <h3 class="text-center">Movement and interactions</h3>
       <img class="center" src="static/images/space-arrows.png" style="width:250px">
-      <p class="text-center">
+      <p class="inst_left_text">
         You can move up, down, left, and right using
         the <b>arrow keys</b>, and interact with objects
         using the <b>spacebar</b>.
       </p>
-      <p class="text-center">
+      <p class="inst_left_text">
         You can interact with objects by facing them and pressing
         <b>spacebar</b>. Here are some examples:
-        <ul style="margin-left: 12%;">
+        <ul>
           <li>You can pick up onions by facing an onion dispenser or an onion on
             a counter and pressing <b>spacebar</b>.</li>
-          <li>If you are holding an onion and are facing an empty counter,
-            and press <b>spacebar</b>, you will put the onion on the counter.</li>
+          <li>If you are holding an onion or dish and are facing an empty counter,
+            and press <b>spacebar</b>, you will put the onion/dish on the counter.</li>
           <li>If you are holding an onion and are facing a pot that is not full,
             and press <b>spacebar</b>, you will put the onion in the pot.</li>
+          <li>If you are holding a dish and are facing a pot with a soup that has finished cooking,
+            and press <b>spacebar</b>, you will move the soup from the pot to your dish.</li>
+          <li>If you are holding a dish with soup in it and are facing a serving area,
+            and press <b>spacebar</b>, you will serve the soup.</li>
         </ul>
       </p>
 
       <br>
-      <p class="text-center">
-        Note that as you and your partner are moving around the kitchen
-        you <u><b>cannot occupy the same location</b></u>.
+      <p class="inst_left_text">
+        <i>NOTE:</i> You and your teammate <u><b>cannot occupy the same location at the same time</b></u>. If both of
+        you try to move into the same space, neither action will go through.
       </p>
       <br>
       <hr>
@@ -94,16 +99,11 @@
 
       <h3 class="text-center">Cooking</h3>
       <img class="center" src="static/images/soup.png" style="width:250px">
-      <p class="text-center">
+      <p class="inst_left_text">
         Once 3 onions are in the pot, the soup will automatically start cooking.
-      </p>
-      <p class="text-center">
         When a soup begins cooking, you'll notice a red number appear over the pot to 
-        denote the cook time. This number counts upward until the soup is done. Soups
-        take 20 timesteps to cook.
-      </p>
-      <p class="text-center">
-        Each soup is worth 20 points.
+        denote the cook time. This number counts up to 20 at which point the soup is done.
+        Each soup served (by either you or your teammate) awards 20 points to your team.
       </p>
 
       <br>
@@ -111,15 +111,23 @@
       <br>
 
       <h3 class="text-center">Goal</h3>
-      <p class="text-center">
-        The team will be awarded 20 points for each soup served.
-        Your goal in this task is to serve as many soups as you can before each level ends.
+      <p class="inst_left_text">
+        The goal of the game is for your team to maximize your points by delivering as many soups as possible
+        within the provided time. Each round will last 60 seconds.
       </p>
-      <div id="control" class="text-center">
-        <button class="sd-btn sd-btn--action sd-navigation__complete-btn" onclick="location.href='./tutorial';">Go to Tutorial</button>
+      <div id="control" class="text-center" style="margin-top: 60px;">
+        <a class="btn-cta sd-btn sd-btn--action sd-navigation__complete-btn" href="./tutorial">Go to Tutorial</a>
       </div>
       <br>
       <br>
     </div>
+  <script>
+     $('.btn-cta').each(function(i, el){
+        let $this = $(this); // only need to create the object once
+        $this.attr({
+            href: $this.attr("href") + window.location.search
+        });
+    });
+  </script>
   </body>
 </html>

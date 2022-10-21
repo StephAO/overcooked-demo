@@ -28,11 +28,27 @@ ranking_survey.onComplete.add(function (survey) {
 
     if (curr_agent_idx == 0) {
         let agent_ranking = survey.data["Agent Ranking"];
-        console.log(agent_ranking)
-        socket.emit("submit_ranking", agent_ranking);
+        console.log(agent_ranking);
+        data = {
+            "ordered_agents": agent_ranking,
+            "PID": PID,
+            "SESSION_ID": SESS_ID,
+            "STUDY_ID": STUDY_ID,
+        }
+        socket.emit("submit_ranking", data);
         ranking_survey.clear(true, true);
         ranking_survey.pages[0].elements[0].choices.length = 0
     }
+
+    if (curr_layout_idx >= layout_order.length) {
+        $('#start-next-round').hide();
+        $('#agents-imgs').hide();
+        $('#game-title').hide();
+        $('#new-layout').hide();
+        $('#completed').show();
+
+    }
+
 });
 $("#rankingElement").Survey({model: ranking_survey});
 

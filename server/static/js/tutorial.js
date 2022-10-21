@@ -49,14 +49,6 @@ $(function() {
     });
 });
 
-$(function() {
-    $('#finish').click(function() {
-        $('finish').attr("disable", true);
-        window.location.href = "./agent_comp";
-    });
-});
-
-
 
 /* * * * * * * * * * * * * 
  * Socket event handlers *

@@ -310,7 +310,9 @@ figure{
     margin-left: 10px;
 }
 
-
+.inst_left_text{
+    text-align: left;
+}
 
 
 html {background-color: #c7b299}

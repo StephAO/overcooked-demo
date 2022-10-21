@@ -15,14 +15,25 @@ var color_to_name = {};
 var human_color = 'blue';
 var layout_order_has_been_set = false;
 
+const uuidv4 = () => {
+  return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
+    (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+  );
+}
 
-(() => {
-    for(i = 0; i < config['agents'].length; i++) {
-        name_to_color[config['agents'][i]] = (config['non_human_colors'][i]);
-        color_to_name[config['non_human_colors'][i]] = config['agents'][i];
-    }
-    console.log(name_to_color)
-})();
+
+const params = new URLSearchParams(window.location.search)
+const PID = params.has('PROLIFIC_PID') ? params.get('PROLIFIC_PID') : String(uuidv4());
+const STUDY_ID = params.has('STUDY_ID') ? params.get('STUDY_ID') : 'None';
+const SESS_ID = params.has('SESSION_ID') ? params.get('SESSION_ID') : 'None';
+
+console.log(PID, STUDY_ID, SESS_ID)
+
+for(i = 0; i < config['agents'].length; i++) {
+    name_to_color[config['agents'][i]] = (config['non_human_colors'][i]);
+    color_to_name[config['non_human_colors'][i]] = config['agents'][i];
+}
+console.log(name_to_color);
 
 const cartesian = (...a) => a.reduce((a, b) => a.flatMap(d => b.map(e => [d, e].flat())));
 const shuffleArray = (array) => {
@@ -33,7 +44,7 @@ const shuffleArray = (array) => {
 }
 
 const set_layout_order = () => {
-    layout_order = config['layouts']
+    layout_order = config['layouts'];
     shuffleArray(layout_order);
     console.log(layout_order);
 };
@@ -59,14 +70,10 @@ const setup_next_round = () => {
     console.log("SNR", curr_layout_idx, layout_order.length, '-', curr_agent_idx, agent_order.length)
     $("#rankingElement").hide();
     $('#agents-ordering').hide();
-    if (curr_layout_idx >= layout_order.length) {
-        $('#start-next-round').hide();
-        $('#agents-imgs').hide();
-        $('#end-rounds').show()
-    } else {
+    if (curr_layout_idx < layout_order.length) {
         $('#game-title').text(`Round ${round_num} / ${tot_rounds}`);
         $('#game-title').show();
-        $("#teammate-img").attr('src', `\static/assets/${name_to_color[agent_order[curr_agent_idx]]}_chef (1).png`);
+        $("#teammate-img").attr('src', `\static/assets/${name_to_color[agent_order[curr_agent_idx]]}_chef.png`);
         $('#teammate-desc').text(`This is agent ${name_to_color[agent_order[curr_agent_idx]]}. They will be your teammate for the next round.`);
         $('#agents-imgs').show();
         $('#start-next-round').text(`Start Next Round`);
@@ -86,12 +93,6 @@ $(function() {
     });
 });
 
-$(function() {
-    $('#end-rounds').click(function() {
-        $('#end-rounds').attr("disable", true);
-        window.location.href = "./agent_rank";
-    });
-});
 
 $(function() {
     $('#start-next-round').click(function() {
@@ -101,7 +102,7 @@ $(function() {
                 "playerZero" : "human",
                 "playerOne" : agent_order[curr_agent_idx],
                 "layouts" : [layout_order[curr_layout_idx]],
-                "gameTime" : 5,
+                "gameTime" : 10,
                 "randomized" : false
             },
             "game_name" : "overcooked"
@@ -157,7 +158,8 @@ socket.on('end_game', function(data) {
     // Hide game data and display survey html
     graphics_end();
     disable_key_listener();
-    round_score = data['data'].score
+    round_score = data['data'].score;
+    human_sb_comp = data['data'].subtask_completion;
 
     if (data.status === 'inactive') {
         // Game ended unexpectedly

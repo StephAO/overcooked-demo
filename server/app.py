@@ -532,14 +532,21 @@ def on_disconnect():
     del USERS[user_id]
 
 @socketio.on('submit_survey')
-def on_connect(data):
+def on_submit_survey(data):
     print(type(data), data, flush=True)
-    # airtable_base.create('tblaCbOjLcQqpNGMF', data)
+    airtable_base.create('tblaCbOjLcQqpNGMF', data)
 
 @socketio.on('submit_ranking')
-def on_connect(data):
+def on_submit_ranking(data):
     print(type(data), data, flush=True)
-    # airtable_base.create('tblxp2qGubm69vH82', {'ordered_agents': json.dumps(data)})
+    data['ordered_agents'] = json.dumps(data['ordered_agents'])
+    airtable_base.create('tblxp2qGubm69vH82', data)
+
+@socketio.on('done')
+def on_done_survey(data):
+    print(type(data), data, flush=True)
+    airtable_base.create('tbl7IbHztYVJhqmvE', data)
+
 
 # Exit handler for server
 def on_exit():

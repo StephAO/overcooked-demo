@@ -41,12 +41,8 @@
         <div id="error-exit" style="display:none">Tutorial ended unexpectedly (probably due to server side error)</div>
     </div>
 
-    <div id="control" class="text-center">
-        <button id="try-again" style="display:none;" class="sd-btn sd-btn--action sd-navigation__complete-btn">Try Again?</button>
-    </div>
-
-    <div id="control2" class="text-center">
-      <button id="finish" class="sd-btn sd-btn--action sd-navigation__complete-btn" style="margin-top: 25px">Start survey</button>
+    <div id="control2" class="text-center" style="margin-top: 80px;">
+      <a id="finish" class="btn-cta sd-btn sd-btn--action sd-navigation__complete-btn" href="./agent_comp">Start Survey</a>
     </div>
 
     <noscript>
@@ -55,5 +51,13 @@
       <p>Instructions for enabling Javascript in your browser can be found 
 	<a href="http://support.google.com/bin/answer.py?hl=en&answer=23852">here</a></p>
     </noscript>
+    <script>
+     $('.btn-cta').each(function(i, el){
+        let $this = $(this); // only need to create the object once
+        $this.attr({
+            href: $this.attr("href") + window.location.search
+        });
+    });
+  </script>
   </body>
 </html>
