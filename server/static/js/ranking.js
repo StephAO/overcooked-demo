@@ -33,7 +33,8 @@ ranking_survey.onComplete.add(function (survey) {
             "ordered_agents": agent_ranking,
             "PID": PID,
             "SESSION_ID": SESS_ID,
-            "STUDY_ID": STUDY_ID
+            "STUDY_ID": STUDY_ID,
+            "layout_name" : layout_order[curr_layout_idx]
         }
         socket.emit("submit_ranking", data);
         ranking_survey.clear(true, true);

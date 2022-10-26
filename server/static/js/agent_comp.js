@@ -3,7 +3,7 @@ var socket = io();
 
 var config = JSON.parse($('#config').text());
 
-var bonus_per_dish = 0.05;
+var bonus_per_dish = 0.03;
 var curr_agent_idx = 0;
 var curr_layout_idx = -1;
 var round_num = -1
@@ -73,10 +73,10 @@ const setup_next_round = () => {
     $("#rankingElement").hide();
     $('#agents-ordering').hide();
     if (curr_layout_idx < layout_order.length) {
-        $('#game-title').text(`Round ${round_num} / ${tot_rounds}`);
-        $('#game-title').show();
         $("#teammate-img").attr('src', `\static/assets/${name_to_color[agent_order[curr_agent_idx]]}_chef.png`);
         $('#teammate-desc').text(`This is ${name_to_color[agent_order[curr_agent_idx]]} chef. They will be your teammate for the next round.`);
+        $('#game-title').text(`Round ${round_num} / ${tot_rounds}`);
+        $('#game-title').show();
         $('#agents-imgs').show();
         $('#start-next-round').text(`Start Next Round`);
         $('#start-next-round').show();
