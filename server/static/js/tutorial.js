@@ -163,7 +163,7 @@ socket.on("connect", function() {
     $('#finish').hide();
 
     // create (or join if it exists) new game
-    socket.emit("join", data);
+    setTimeout(socket.emit("join", data), 1000);
 });
 
 

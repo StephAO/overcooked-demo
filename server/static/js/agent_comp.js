@@ -115,7 +115,7 @@ $(function() {
         $('#new-layout').hide()
         setAgentColors({0: human_color, 1: name_to_color[agent_order[curr_agent_idx]]})
         // create (or join if it exists) new game
-        socket.emit("create", data);
+        setTimeout(socket.emit("create", data), 1000);
         $('#overcooked-container').show();
     });
 });

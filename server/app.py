@@ -513,7 +513,7 @@ def on_action(data):
 @socketio.on('connect')
 def on_connect():
     user_id = request.sid
-
+    print(f"USER: {user_id} connected!", flush=True)
     if user_id in USERS:
         return
 
@@ -524,6 +524,7 @@ def on_connect():
 def on_disconnect():
     # Ensure game data is properly cleaned-up in case of unexpected disconnect
     user_id = request.sid
+    print(f"USER: {user_id} dicconnected...", flush=True)
     if user_id not in USERS:
         return
     with USERS[user_id]:
