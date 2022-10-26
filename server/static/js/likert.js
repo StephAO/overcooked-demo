@@ -73,7 +73,7 @@ var json = {
             }
           ],
           "alternateRows": true,
-//          "isAllRowRequired": true
+          "isAllRowRequired": true
         }
       ]
     },
@@ -116,14 +116,14 @@ likert_survey.onComplete.add(function (sender) {
     socket.emit("submit_survey", data);
     likert_survey.clear(true, true);
     $('#surveyElement').hide();
-    agent_color_name = 'agent ' + name_to_color[agent_order[curr_agent_idx]];
+    agent_color_name = name_to_color[agent_order[curr_agent_idx]] + ' chef';
     var new_agent = new Survey.ItemValue(agent_order[curr_agent_idx], agent_color_name);
     console.log(new_agent);
     ranking_survey.pages[0].elements[0].choices.push(new_agent);
     // Setup agent ordering
     el_id = `#agent-${curr_agent_idx+1}`;
     $(el_id+"-img").attr('src', `\static/assets/${name_to_color[agent_order[curr_agent_idx]]}_chef.png`);
-    $(el_id+"-dsc").text(`${curr_agent_idx+1}. agent ${name_to_color[agent_order[curr_agent_idx]]}`);
+    $(el_id+"-dsc").text(`${curr_agent_idx+1}. ${name_to_color[agent_order[curr_agent_idx]]} chef`);
     $(el_id).show();
     // Rank only if there's enough agents to do so
     if (ranking_survey.pages[0].elements[0].choices.length < 2) {

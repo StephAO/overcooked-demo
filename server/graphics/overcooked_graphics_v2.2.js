@@ -24,7 +24,7 @@ var scene_config = {
     show_post_cook_time : false,
     cook_time : 20,
     assets_loc : "./static/assets/",
-    hud_size : 85
+    hud_size : 95
 };
 
 var game_config = {
@@ -93,6 +93,7 @@ class OvercookedScene extends Phaser.Scene {
         this.cook_time = config.cook_time;
         this.assets_loc = config.assets_loc;
         this.hud_size = config.hud_size
+        this.agent_msg_area_size = 35
         this.hud_data = {
             potential : config.start_state.potential,
             score : config.start_state.score,
@@ -169,7 +170,7 @@ class OvercookedScene extends Phaser.Scene {
                 let ttype = pos_dict[row][col];
                 let tile = this.add.sprite(
                     this.tileSize * x,
-                    this.tileSize * y,
+                    this.tileSize * y + this.agent_msg_area_size,
                     "tiles",
                     terrain_to_img[ttype]
                 );
@@ -209,7 +210,7 @@ class OvercookedScene extends Phaser.Scene {
             if (typeof(sprites['chefs'][pi]) === 'undefined') {
                 let chefsprite = this.add.sprite(
                     this.tileSize*x,
-                    this.tileSize*y,
+                    this.tileSize*y + this.agent_msg_area_size,
                     "chefs",
                     `${dir}${held_obj}.png`
                 );
@@ -218,7 +219,7 @@ class OvercookedScene extends Phaser.Scene {
                 chefsprite.setOrigin(0);
                 let hatsprite = this.add.sprite(
                     this.tileSize*x,
-                    this.tileSize*y,
+                    this.tileSize*y + this.agent_msg_area_size,
                     "hats",
                     `${dir}-${this.player_colors[pi]}hat.png`
                 );
@@ -235,11 +236,11 @@ class OvercookedScene extends Phaser.Scene {
                 this.tweens.add({
                     targets: [chefsprite, hatsprite],
                     x: this.tileSize*x,
-                    y: this.tileSize*y,
+                    y: this.tileSize*y + this.agent_msg_area_size,
                     duration: this.animation_duration,
                     ease: 'Linear',
                     onComplete: (tween, target, player) => {
-                        target[0].setPosition(this.tileSize*x, this.tileSize*y);
+                        target[0].setPosition(this.tileSize*x, this.tileSize*y + this.agent_msg_area_size);
                         //this.animating = false;
                     }
                 })
@@ -278,7 +279,7 @@ class OvercookedScene extends Phaser.Scene {
                 spriteframe = this._ingredientsToSpriteFrame(ingredients, soup_status);
                 let objsprite = this.add.sprite(
                     this.tileSize*x,
-                    this.tileSize*y,
+                    this.tileSize*y + this.agent_msg_area_size,
                     "soups",
                     spriteframe
                 );
@@ -295,7 +296,7 @@ class OvercookedScene extends Phaser.Scene {
                 if (show_time) {
                     let timesprite =  this.add.text(
                         this.tileSize*(x+.5),
-                        this.tileSize*(y+.6),
+                        this.tileSize*(y+.6) + this.agent_msg_area_size,
                         String(obj._cooking_tick),
                         {
                             font: "25px Arial",
@@ -315,7 +316,7 @@ class OvercookedScene extends Phaser.Scene {
                 spriteframe = this._ingredientsToSpriteFrame(ingredients, soup_status);
                 let objsprite = this.add.sprite(
                     this.tileSize*x,
-                    this.tileSize*y,
+                    this.tileSize*y + this.agent_msg_area_size,
                     "soups",
                     spriteframe
                 );
@@ -336,7 +337,7 @@ class OvercookedScene extends Phaser.Scene {
                 }
                 let objsprite = this.add.sprite(
                     this.tileSize*x,
-                    this.tileSize*y,
+                    this.tileSize*y + this.agent_msg_area_size,
                     "objects",
                     spriteframe
                 );
@@ -384,7 +385,7 @@ class OvercookedScene extends Phaser.Scene {
                     let spriteFrame = this._ingredientsToSpriteFrame(orders[i]['ingredients'], "done");
                     let orderSprite = this.add.sprite(
                         130 + 40 * i,
-                        board_height + 40,
+                        board_height + 40 + this.agent_msg_area_size,
                         "soups",
                         spriteFrame
                     );
@@ -397,7 +398,7 @@ class OvercookedScene extends Phaser.Scene {
             else {
                 sprites['bonus_orders'] = {};
                 sprites['bonus_orders']['str'] = this.add.text(
-                    5, board_height + 60, orders_str,
+                    5, board_height + 60 + this.agent_msg_area_size, orders_str,
                     {
                         font: "20px Arial",
                         fill: "red",
@@ -424,7 +425,7 @@ class OvercookedScene extends Phaser.Scene {
                     let spriteFrame = this._ingredientsToSpriteFrame(orders[i]['ingredients'], "done");
                     let orderSprite = this.add.sprite(
                         90 + 40 * i,
-                        board_height - 4,
+                        board_height - 4 + this.agent_msg_area_size,
                         "soups",
                         spriteFrame
                     );
@@ -437,7 +438,7 @@ class OvercookedScene extends Phaser.Scene {
             else {
                 sprites['all_orders'] = {};
                 sprites['all_orders']['str'] = this.add.text(
-                    5, board_height + 15, orders_str,
+                    5, board_height + 15 + this.agent_msg_area_size, orders_str,
                     {
                         font: "20px Arial",
                         fill: "red",
@@ -450,17 +451,28 @@ class OvercookedScene extends Phaser.Scene {
     }
 
     _drawAgentMsg(agent_msg, sprites, board_height) {
-        agent_msg = "Agent msg: "+agent_msg;
+//        base_msg = ;
         if (typeof(sprites['agent_msg']) !== 'undefined') {
+//            sprites['base_msg'].setText(base_msg);
             sprites['agent_msg'].setText(agent_msg);
         }
         else {
-            sprites['agent_msg'] = this.add.text(
-                5, board_height + 5, agent_msg,
+            sprites['base_msg'] = this.add.text(
+                5, 5, "Agent msg: ",
                 {
                     font: "20px Arial",
                     fill: "red",
                     align: "left"
+                }
+            )
+            let { width, height } = this.game.canvas;
+            sprites['agent_msg'] = this.add.text(
+                110, 5, agent_msg,
+                {
+                    font: "20px Arial",
+                    fill: "black",
+                    align: "center",
+                    halign: "center"
                 }
             )
         }
@@ -473,7 +485,7 @@ class OvercookedScene extends Phaser.Scene {
         }
         else {
             sprites['score'] = this.add.text(
-                5, board_height + 30, score,
+                5, board_height + 5 + this.agent_msg_area_size, score,
                 {
                     font: "20px Arial",
                     fill: "red",
@@ -490,7 +502,7 @@ class OvercookedScene extends Phaser.Scene {
         }
         else {
             sprites['potential'] = this.add.text(
-                100, board_height + 90, potential,
+                100, board_height + 55 + this.agent_msg_area_size, potential,
                 {
                     font: "20px Arial",
                     fill: "red",
@@ -507,7 +519,7 @@ class OvercookedScene extends Phaser.Scene {
         }
         else {
             sprites['time_left'] = this.add.text(
-                5, board_height + 55, time_left,
+                5, board_height + 30 + this.agent_msg_area_size, time_left,
                 {
                     font: "20px Arial",
                     fill: "red",

@@ -3,11 +3,13 @@ var socket = io();
 
 var config = JSON.parse($('#config').text());
 
+var bonus_per_dish = 0.05;
 var curr_agent_idx = 0;
 var curr_layout_idx = -1;
 var round_num = -1
 var tot_rounds = -1
 var round_score = -1;
+var tot_soups_served = 0;
 var agent_order = [];
 var layout_order = [];
 var name_to_color = {};
@@ -74,7 +76,7 @@ const setup_next_round = () => {
         $('#game-title').text(`Round ${round_num} / ${tot_rounds}`);
         $('#game-title').show();
         $("#teammate-img").attr('src', `\static/assets/${name_to_color[agent_order[curr_agent_idx]]}_chef.png`);
-        $('#teammate-desc').text(`This is agent ${name_to_color[agent_order[curr_agent_idx]]}. They will be your teammate for the next round.`);
+        $('#teammate-desc').text(`This is ${name_to_color[agent_order[curr_agent_idx]]} chef. They will be your teammate for the next round.`);
         $('#agents-imgs').show();
         $('#start-next-round').text(`Start Next Round`);
         $('#start-next-round').show();
@@ -102,7 +104,7 @@ $(function() {
                 "playerZero" : "human",
                 "playerOne" : agent_order[curr_agent_idx],
                 "layouts" : [layout_order[curr_layout_idx]],
-                "gameTime" : 10,
+                "gameTime" : 80,
                 "randomized" : false
             },
             "game_name" : "overcooked"
@@ -111,6 +113,7 @@ $(function() {
         console.log("agent images should be hidden")
         $('#agents-imgs').hide();
         $('#new-layout').hide()
+        $('#overcooked-container').show();
         setAgentColors({0: human_color, 1: name_to_color[agent_order[curr_agent_idx]]})
         // create (or join if it exists) new game
         socket.emit("create", data);
@@ -159,6 +162,7 @@ socket.on('end_game', function(data) {
     graphics_end();
     disable_key_listener();
     round_score = data['data'].score;
+    tot_soups_served += (round_score / 20)
     human_sb_comp = data['data'].subtask_completion;
 
     if (data.status === 'inactive') {

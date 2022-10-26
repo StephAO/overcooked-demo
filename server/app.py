@@ -542,7 +542,7 @@ def on_submit_ranking(data):
     data['ordered_agents'] = json.dumps(data['ordered_agents'])
     airtable_base.create('tblxp2qGubm69vH82', data)
 
-@socketio.on('done')
+@socketio.on('completed_full_survey')
 def on_done_survey(data):
     print(type(data), data, flush=True)
     airtable_base.create('tbl7IbHztYVJhqmvE', data)

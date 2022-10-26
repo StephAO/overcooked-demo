@@ -33,7 +33,7 @@ ranking_survey.onComplete.add(function (survey) {
             "ordered_agents": agent_ranking,
             "PID": PID,
             "SESSION_ID": SESS_ID,
-            "STUDY_ID": STUDY_ID,
+            "STUDY_ID": STUDY_ID
         }
         socket.emit("submit_ranking", data);
         ranking_survey.clear(true, true);
@@ -41,14 +41,22 @@ ranking_survey.onComplete.add(function (survey) {
     }
 
     if (curr_layout_idx >= layout_order.length) {
+         data = {
+            "PID": PID,
+            "SESSION_ID": SESS_ID,
+            "STUDY_ID": STUDY_ID,
+            "soups_served": tot_soups_served,
+            "bonus_payment": tot_soups_served * bonus_per_dish
+        }
+        socket.emit("completed_full_survey", data);
+
         $('#start-next-round').hide();
         $('#agents-imgs').hide();
         $('#game-title').hide();
         $('#new-layout').hide();
+        $('#completed-str').text(`Thank you for completing the survey. You served a total of ${tot_soups_served} soups, earning a bonus of ${tot_soups_served * bonus_per_dish}$. Please click the button to return to Prolific.co`);
         $('#completed').show();
-
     }
-
 });
 $("#rankingElement").Survey({model: ranking_survey});
 

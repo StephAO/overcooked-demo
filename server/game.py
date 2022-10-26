@@ -6,7 +6,7 @@ from overcooked_ai_py.mdp.overcooked_mdp import OvercookedGridworld
 from overcooked_ai_py.mdp.overcooked_env import OvercookedEnv
 from overcooked_ai_py.mdp.actions import Action, Direction
 from overcooked_ai_py.planning.planners import MotionPlanner, NO_COUNTERS_PARAMS
-from oai_agents.agents import load_agent
+from oai_agents.agents.agent_utils import load_agent
 from oai_agents.common.subtasks import calculate_completed_subtask
 from pathlib import Path
 import random, os, pickle, json
@@ -462,8 +462,7 @@ class OvercookedGame(Game):
             if state.players == self.npc_prev_states[policy_id] and stale < 3:
                 continue
             self.npc_prev_states[policy_id] = state.players
-            npc_action, agent_msg = policy.action(state)#, deterministic=False)
-
+            npc_action, agent_msg = policy.action(state, deterministic=True)
             if agent_msg != ' ':
                 self.agent_msg = agent_msg
             super(OvercookedGame, self).enqueue_action(policy_id, npc_action)
@@ -595,10 +594,17 @@ class OvercookedGame(Game):
     def get_policy(self, npc_id, idx=0):
         if npc_id.lower().startswith("oai"):
             try:
+                output_msg, tune_hrl = False, None
+                if '_msg' in npc_id:
+                    output_msg = True
+                    npc_id = npc_id.replace('_msg', '')
+                if '_tuned' in npc_id:
+                    tune_hrl = True
+                    npc_id = npc_id.replace('_tuned', '')
                 # Loading aoi agents requires additional helpers
                 fpath = AGENT_DIR / npc_id
                 agent = load_agent(fpath)
-                agent.set_idx(p_idx=idx)
+                agent.set_idx(idx, self.layouts[0], is_hrl=('hrl' in npc_id), output_message=output_msg, tune_subtasks=tune_hrl)
                 return agent
             except Exception as e:
                 raise IOError(f"{fpath}, Error loading OAI Agent\n{e}")
@@ -848,8 +854,8 @@ class TutorialAI():
 
         # Deliver soup
         Action.STAY,
-        Action.STAY,
-        Action.INTERACT,
+        # Action.STAY,
+        # Action.INTERACT,
         Action.INTERACT,
         Action.INTERACT,
         Direction.EAST,
