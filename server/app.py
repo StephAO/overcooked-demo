@@ -424,7 +424,7 @@ def debug():
 
 @socketio.on('create')
 def on_create(data):
-    user_id = request.sid
+    user_id = data['pid']
     print('starting create', flush=True)
     with USERS[user_id]:
         # Retrieve current game if one exists
@@ -443,7 +443,7 @@ def on_create(data):
 
 @socketio.on('join')
 def on_join(data):
-    user_id = request.sid
+    user_id = data['pid']
     with USERS[user_id]:
         create_if_not_found = data.get("create_if_not_found", True)
 
@@ -488,7 +488,7 @@ def on_join(data):
 
 @socketio.on('leave')
 def on_leave(data):
-    user_id = request.sid
+    user_id = data['pid']
     with USERS[user_id]:
         was_active = _leave_game(user_id)
 
@@ -500,7 +500,7 @@ def on_leave(data):
 
 @socketio.on('action')
 def on_action(data):
-    user_id = request.sid
+    user_id = data['pid']
     action = data['action']
 
     game = get_curr_game(user_id)
@@ -510,9 +510,9 @@ def on_action(data):
     game.enqueue_action(user_id, action)
 
 
-@socketio.on('connect')
-def on_connect():
-    user_id = request.sid
+@socketio.on('server_connect')
+def on_connect(data):
+    user_id = data['pid']
     print(f"USER: {user_id} connected!", flush=True)
     if user_id in USERS:
         return
@@ -520,11 +520,11 @@ def on_connect():
     USERS[user_id] = Lock()
 
 
-@socketio.on('disconnect')
-def on_disconnect():
+@socketio.on('server_disconnect')
+def on_disconnect(data):
     # Ensure game data is properly cleaned-up in case of unexpected disconnect
-    user_id = request.sid
-    print(f"USER: {user_id} dicconnected...", flush=True)
+    user_id = data['pid']
+    print(f"USER: {user_id} disconnected...", flush=True)
     if user_id not in USERS:
         return
     with USERS[user_id]:

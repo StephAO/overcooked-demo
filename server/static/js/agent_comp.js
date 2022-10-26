@@ -105,9 +105,10 @@ $(function() {
                 "playerOne" : agent_order[curr_agent_idx],
                 "layouts" : [layout_order[curr_layout_idx]],
                 "gameTime" : 80,
-                "randomized" : false
+                "randomized" : false,
             },
-            "game_name" : "overcooked"
+            "game_name" : "overcooked",
+            "pid": PID
         };
         $('#start-next-round').hide();
         console.log("agent images should be hidden")
@@ -211,7 +212,7 @@ function enable_key_listener() {
                 return; 
         }
         e.preventDefault();
-        socket.emit('action', { 'action' : action });
+        socket.emit('action', { 'action' : action, 'pid': PID});
     });
 };
 
@@ -224,14 +225,18 @@ function disable_key_listener() {
  * Game Initialization *
  * * * * * * * * * * * */
 
-socket.on("connect", function() {
+socket.once("connect", function() {
     if (!layout_order_has_been_set) {
         set_layout_order();
         layout_order_has_been_set = true;
+        setup_next_round();
+        socket.emit('server_connect', {'pid': PID})
     }
-    setup_next_round();
 });
 
+socket.once("disconnect", function() {
+    socket.emit('server_disconnect', {'pid': PID})
+});
 
 /* * * * * * * * * * *
  * Utility Functions *

@@ -1,7 +1,15 @@
 // Persistent network connection that will be used to transmit real-time data
 var socket = io();
 
+const uuidv4 = () => {
+  return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
+    (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+  );
+}
 
+
+const params = new URLSearchParams(window.location.search)
+const PID = params.has('PROLIFIC_PID') ? params.get('PROLIFIC_PID') : String(uuidv4());
 
 var config;
 
@@ -34,7 +42,8 @@ $(function() {
     $('#try-again').click(function () {
         data = {
             "params" : config['tutorialParams'],
-            "game_name" : "tutorial"
+            "game_name" : "tutorial",
+            "pid": PID
         };
         socket.emit("join", data);
         $('try-again').attr("disable", true);
@@ -43,7 +52,7 @@ $(function() {
 
 $(function() {
     $('#quit').click(function() {
-        socket.emit("leave", {});
+        socket.emit("leave", {"pid": PID});
         $('quit').attr("disable", true);
         window.location.href = "./";
     });
@@ -141,7 +150,7 @@ function enable_key_listener() {
                 return; 
         }
         e.preventDefault();
-        socket.emit('action', { 'action' : action });
+        socket.emit('action', { 'action' : action, "pid": PID });
     });
 };
 
@@ -153,17 +162,23 @@ function disable_key_listener() {
  * Game Initialization *
  * * * * * * * * * * * */
 
-socket.on("connect", function() {
+socket.once("connect", function() {
     // Config for this specific game
     let data = {
         "params" : config['tutorialParams'],
-        "game_name" : "tutorial"
+        "game_name" : "tutorial",
+        "pid": PID
     };
+    socket.emit('server_connect', {'pid': PID})
 
     $('#finish').hide();
 
     // create (or join if it exists) new game
-    setTimeout(socket.emit("join", data), 1000);
+    socket.emit("join", data);
+});
+
+socket.once("disconnect", function() {
+    socket.emit('server_disconnect', {'pid': PID})
 });
 
 
