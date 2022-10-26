@@ -113,10 +113,10 @@ $(function() {
         console.log("agent images should be hidden")
         $('#agents-imgs').hide();
         $('#new-layout').hide()
-        $('#overcooked-container').show();
         setAgentColors({0: human_color, 1: name_to_color[agent_order[curr_agent_idx]]})
         // create (or join if it exists) new game
         socket.emit("create", data);
+        $('#overcooked-container').show();
     });
 });
 
