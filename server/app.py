@@ -170,7 +170,9 @@ def cleanup_game(game):
     # Game tracking
     FREE_MAP[game.id] = True
     FREE_IDS.put(game.id)
+    print("Start cleaning up game", len(GAMES), GAMES, flush=True)
     del GAMES[game.id]
+    print("Done cleaning up game", len(GAMES), GAMES, flush=True)
 
     if game.id in ACTIVE_GAMES:
         ACTIVE_GAMES.remove(game.id)

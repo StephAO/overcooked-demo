@@ -21,6 +21,10 @@ AGENT_DIR = None
 MAX_GAME_TIME = None
 
 
+# Preload agents
+# fpath = AGENT_DIR / npc_id
+# agent = load_agent(fpath)
+
 def _configure(fps, max_game_time, agent_dir):
     global AGENT_DIR, MAX_GAME_TIME, FPS
     FPS = fps

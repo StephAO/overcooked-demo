@@ -104,7 +104,7 @@ $(function() {
                 "playerZero" : "human",
                 "playerOne" : agent_order[curr_agent_idx],
                 "layouts" : [layout_order[curr_layout_idx]],
-                "gameTime" : 80,
+                "gameTime" : 4,
                 "randomized" : false,
             },
             "game_name" : "overcooked",
