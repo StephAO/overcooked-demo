@@ -466,7 +466,7 @@ class OvercookedGame(Game):
             if state.players == self.npc_prev_states[policy_id] and stale < 3:
                 continue
             self.npc_prev_states[policy_id] = state.players
-            npc_action, agent_msg = policy.action(state, deterministic=True)
+            npc_action, agent_msg = policy.action(state, deterministic=False)
             if agent_msg != ' ':
                 self.agent_msg = agent_msg
             super(OvercookedGame, self).enqueue_action(policy_id, npc_action)
