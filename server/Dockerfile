@@ -12,8 +12,8 @@ COPY ./requirements.txt ./requirements.txt
 RUN pip install -r requirements.txt
 
 # Install eventlet production server if production build
-RUN if [ "$BUILD_ENV" = "production" ] ; then pip install eventlet==0.30.2 ; fi
-# RUN pip install gunicorn==20.1.0 eventlet==0.30.2
+# RUN if [ "$BUILD_ENV" = "production" ] ; then pip install gunicorn==20.1.0 eventlet==0.30.2 ; fi
+RUN pip install gunicorn eventlet==0.30.2
 # Clone oai_agents code
 RUN git clone https://github.com/StephAO/overcooked_ai.git --branch $OVERCOOKED_BRANCH --single-branch /overcooked_ai
 # TODO - remove personal auth token
@@ -39,7 +39,7 @@ COPY ./*.py ./
 COPY ./graphics/$GRAPHICS ./static/js/graphics.js
 COPY ./config.json ./config.json
 
-
+COPY ./gunicorn.py ./gunicorn.py
 # Set environment variables that will be used by app.py
 
 ENV CONF_PATH config.json
@@ -52,7 +52,7 @@ EXPOSE 5000
 ENV HOST 0.0.0.0
 ENV PORT 5000
 
-CMD ["python", "-u", "app.py"]
-# RUN gunicorn --worker-class eventlet -w 1 app:app
-# CMD ["gunicorn", "--worker-class", "eventlet", "-w", "1", "app:app"]
+# CMD ["python", "-u", "app.py"]
+# RUN gunicorn --worker-class eventlet --workers 3 wsgi:app
+CMD ["gunicorn", "-c", "gunicorn.py", "wsgi:app"]
 # RUN if [ "$BUILD_ENV" = "production" ] ; then gunicorn --worker-class eventlet -w 1 module:app ; else CMD ["python", "-u", "app.py"]; fi

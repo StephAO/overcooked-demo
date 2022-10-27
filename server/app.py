@@ -1,15 +1,15 @@
 import os
 
 # Import and patch the production eventlet server if necessary
-if os.getenv('FLASK_ENV', 'production') == 'production':
-    import eventlet
-    eventlet.monkey_patch()
+# if os.getenv('FLASK_ENV', 'production') == 'production':
+import eventlet
+eventlet.monkey_patch()
 
 # All other imports must come after patch to ensure eventlet compatibility
 import queue, atexit, json, logging
 from threading import Lock
 from utils import ThreadSafeSet, ThreadSafeDict
-from flask import Flask, render_template, jsonify, request
+from flask import Flask, render_template, jsonify, request, Blueprint
 from flask_socketio import SocketIO, join_room, leave_room, emit
 from game import OvercookedGame, OvercookedTutorial, Game, OvercookedPsiturk
 import game
@@ -105,16 +105,23 @@ airtable_base = Base(api_key, 'appANDT09wpSE4QLn')
 # Flask Configuration #
 #######################
 
-# Create and configure flask app
-app = Flask(__name__, template_folder=os.path.join('static', 'templates'))
-app.config['DEBUG'] = os.getenv('FLASK_ENV', 'production') == 'development'
-socketio = SocketIO(app, cors_allowed_origins="*", logger=app.config['DEBUG'])
+main = Blueprint('main', __name__)
 
+socketio = SocketIO(cors_allowed_origins="*", logger=os.getenv('FLASK_ENV', 'production') == 'development')
 
-# Attach handler for logging errors to file
-handler = logging.FileHandler(LOGFILE)
-handler.setLevel(logging.ERROR)  
-app.logger.addHandler(handler)  
+def create_app():
+    # Create and configure flask app
+    app = Flask(__name__, template_folder=os.path.join('static', 'templates'))
+    app.config['DEBUG'] = os.getenv('FLASK_ENV', 'production') == 'development'
+
+    # Attach handler for logging errors to file
+    handler = logging.FileHandler(LOGFILE)
+    handler.setLevel(logging.ERROR)
+    app.logger.addHandler(handler)
+    app.register_blueprint(main)
+    socketio.init_app(app)
+    print("!!!", app, flush=True)
+    return app
 
 
 #################################
@@ -340,40 +347,40 @@ def get_agent_names():
 # Hitting each of these endpoints creates a brand new socket that is closed 
 # at after the server response is received. Standard HTTP protocol
 
-@app.route('/')
+@main.route('/')
 def index():
     agent_names = get_agent_names()
     return render_template('index.html', agent_names=agent_names, layouts=LAYOUTS)
 
-@app.route('/psiturk')
+@main.route('/psiturk')
 def psiturk():
     uid = request.args.get("UID")
     psiturk_config = request.args.get('config', PSITURK_CONFIG)
     return render_template('psiturk.html', uid=uid, config=psiturk_config)
 
-@app.route('/instructions')
+@main.route('/instructions')
 def instructions():
     psiturk = request.args.get('psiturk', False)
     return render_template('instructions.html', layout_conf=LAYOUT_GLOBALS, psiturk=psiturk)
 
-@app.route('/agent_comp')
+@main.route('/agent_comp')
 def agent_comp():
     psiturk = request.args.get('agent_comp', False)
     print('calling render template', flush=True)
     return render_template('agent_comp.html', config=SURVEY_CONFIG, psiturk=psiturk)
 
-@app.route('/agent_rank')
+@main.route('/agent_rank')
 def agent_rank():
     psiturk = request.args.get('agent_rank', False)
     print('calling render template', flush=True)
     return render_template('agent_rank.html', config=SURVEY_CONFIG, psiturk=psiturk)
 
-@app.route('/tutorial')
+@main.route('/tutorial')
 def tutorial():
     psiturk = request.args.get('psiturk', False)
     return render_template('tutorial.html', config=TUTORIAL_CONFIG, psiturk=psiturk)
 
-@app.route('/debug')
+@main.route('/debug')
 def debug():
     resp = {}
     games = []
@@ -513,7 +520,7 @@ def on_action(data):
 @socketio.on('server_connect')
 def on_connect(data):
     user_id = data['pid']
-    print(f"USER: {user_id} connected!", flush=True)
+    # print(f"USER: {user_id} connected!", flush=True)
     if user_id in USERS:
         return
 
@@ -524,7 +531,7 @@ def on_connect(data):
 def on_disconnect(data):
     # Ensure game data is properly cleaned-up in case of unexpected disconnect
     user_id = data['pid']
-    print(f"USER: {user_id} disconnected...", flush=True)
+    # print(f"USER: {user_id} disconnected...", flush=True)
     if user_id not in USERS:
         return
     with USERS[user_id]:
@@ -594,13 +601,13 @@ def play_game(game, fps=30):
 
 
 
-if __name__ == '__main__':
-    # Dynamically parse host and port from environment variables (set by docker build)
-    host = os.getenv('HOST', '0.0.0.0')
-    port = int(os.getenv('PORT', 80))
-
-    # Attach exit handler to ensure graceful shutdown
-    atexit.register(on_exit)
-
-    # https://localhost:80 is external facing address regardless of build environment
-    socketio.run(app, host=host, port=port, log_output=app.config['DEBUG'])
+# if __name__ == '__main__':
+#     # Dynamically parse host and port from environment variables (set by docker build)
+#     host = os.getenv('HOST', '0.0.0.0')
+#     port = int(os.getenv('PORT', 80))
+#
+#     # Attach exit handler to ensure graceful shutdown
+#     atexit.register(on_exit)
+#
+#     # https://localhost:80 is external facing address regardless of build environment
+#     socketio.run(app, host=host, port=port, log_output=app.config['DEBUG'])
