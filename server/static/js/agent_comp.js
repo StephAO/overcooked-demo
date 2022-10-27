@@ -68,7 +68,7 @@ const setup_next_round = () => {
     $("#teammate-img").attr('src', `\static/assets/${name_to_color[agent_order[curr_agent_idx]]}_chef.png`);
     $('#teammate-desc').text(`This is ${name_to_color[agent_order[curr_agent_idx]]} chef. They will be your teammate for the next round.`);
 
-    round_num = curr_layout_idx * config['layouts'].length + curr_agent_idx + 1;
+    round_num = curr_layout_idx * config['agents'].length + curr_agent_idx + 1;
     tot_rounds = config['agents'].length * config['layouts'].length;
 
     console.log("SNR", curr_layout_idx, layout_order.length, '-', curr_agent_idx, agent_order.length)
