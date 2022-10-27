@@ -25,7 +25,7 @@ ranking_survey.onComplete.add(function (survey) {
     survey.clear(false, true);
     survey.render();
 
-    if (curr_agent_idx == 0) {
+    if ((curr_agent_idx + 1) % config['agents'].length == 0) {
         let agent_ranking = survey.data["Agent Ranking"];
         console.log(agent_ranking);
         data = {

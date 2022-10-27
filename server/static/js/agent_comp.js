@@ -65,6 +65,8 @@ const setup_next_round = () => {
         $('#new-layout').text(`New Layout (${curr_layout_idx + 1}/${layout_order.length})!`);
         $('#new-layout').show();
     }
+    $("#teammate-img").attr('src', `\static/assets/${name_to_color[agent_order[curr_agent_idx]]}_chef.png`);
+    $('#teammate-desc').text(`This is ${name_to_color[agent_order[curr_agent_idx]]} chef. They will be your teammate for the next round.`);
 
     round_num = curr_layout_idx * config['layouts'].length + curr_agent_idx + 1;
     tot_rounds = config['agents'].length * config['layouts'].length;
@@ -73,8 +75,6 @@ const setup_next_round = () => {
     $("#rankingElement").hide();
     $('#agents-ordering').hide();
     if (curr_layout_idx < layout_order.length) {
-        $("#teammate-img").attr('src', `\static/assets/${name_to_color[agent_order[curr_agent_idx]]}_chef.png`);
-        $('#teammate-desc').text(`This is ${name_to_color[agent_order[curr_agent_idx]]} chef. They will be your teammate for the next round.`);
         $('#game-title').text(`Round ${round_num} / ${tot_rounds}`);
         $('#game-title').show();
         $('#agents-imgs').show();
@@ -116,7 +116,7 @@ $(function() {
         $('#new-layout').hide()
         setAgentColors({0: human_color, 1: name_to_color[agent_order[curr_agent_idx]]})
         // create (or join if it exists) new game
-        setTimeout(socket.emit("create", data), 1000);
+        socket.emit("create", data);
         $('#overcooked-container').show();
     });
 });
