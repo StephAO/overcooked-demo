@@ -19,10 +19,6 @@ RUN git clone https://github.com/StephAO/overcooked_ai.git --branch $OVERCOOKED_
 # TODO - remove personal auth token
 RUN git clone https://github.com/StephAO/oai_agents.git --branch $AGENT_BRANCH --single-branch /oai_agents
 
-# Is this necessary?
-# Dummy data_dir so things don't break
-# RUN echo "import os; DATA_DIR=os.path.abspath('.')" >> /human_aware_rl/human_aware_rl/data_dir.py
-
 # Install CPU pytorch
 RUN pip install torch torchvision torchaudio --extra-index-url https://download.pytorch.org/whl/cpu
 # Install chai dependencies

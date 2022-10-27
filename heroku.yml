@@ -6,4 +6,4 @@ build:
     OVERCOOKED_BRANCH: "main"
     AGENT_BRANCH: "main"
     GRAPHICS: "overcooked_graphics_v2.2.js"
-    FLASK_ENV: "development"
+    FLASK_ENV: "production"
