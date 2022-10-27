@@ -12,8 +12,8 @@ COPY ./requirements.txt ./requirements.txt
 RUN pip install -r requirements.txt
 
 # Install eventlet production server if production build
-RUN if [ "$BUILD_ENV" = "production" ] ; then pip install eventlet ; fi
-
+RUN if [ "$BUILD_ENV" = "production" ] ; then pip install eventlet==0.30.2 ; fi
+# RUN pip install gunicorn==20.1.0 eventlet==0.30.2
 # Clone oai_agents code
 RUN git clone https://github.com/StephAO/overcooked_ai.git --branch $OVERCOOKED_BRANCH --single-branch /overcooked_ai
 # TODO - remove personal auth token
@@ -41,8 +41,7 @@ COPY ./config.json ./config.json
 
 
 # Set environment variables that will be used by app.py
-ENV HOST 0.0.0.0
-ENV PORT 5000
+
 ENV CONF_PATH config.json
 
 # Set airtable api key
@@ -50,4 +49,10 @@ ENV AIRTABLE_API_KEY key9qXD3bda1nLxfH
 
 # Do the thing
 EXPOSE 5000
+ENV HOST 0.0.0.0
+ENV PORT 5000
+
 CMD ["python", "-u", "app.py"]
+# RUN gunicorn --worker-class eventlet -w 1 app:app
+# CMD ["gunicorn", "--worker-class", "eventlet", "-w", "1", "app:app"]
+# RUN if [ "$BUILD_ENV" = "production" ] ; then gunicorn --worker-class eventlet -w 1 module:app ; else CMD ["python", "-u", "app.py"]; fi
