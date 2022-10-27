@@ -1,4 +1,6 @@
-bind= "0.0.0.0:5000"
+import os
+
+bind= f"0.0.0.0:{os.getenv('PORT')}"
 worker_class = "eventlet"
-workers = 1
+workers = 9
 log_level = "debug"
