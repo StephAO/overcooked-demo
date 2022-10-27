@@ -26,7 +26,7 @@
     },
     "agentComp" : {
         "layouts" : ["counter_circuit_o_1order", "forced_coordination", "asymmetric_advantages"],
-        "agents" : ["oai_hrl", "oai_hrl_msg", "oai_hrl_tuned"],
+        "agents" : ["oai_fcp", "oai_sp", "oai_bcp", "oai_hrl"],
         "non_human_colors" : ["pink", "yellow", "burgundy", "mint", "cyan"]
     },
     "layout_globals" : {
