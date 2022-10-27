@@ -24,7 +24,6 @@ ranking_survey = new Survey.Model(json);
 ranking_survey.onComplete.add(function (survey) {
     survey.clear(false, true);
     survey.render();
-    setup_next_round();
 
     if (curr_agent_idx == 0) {
         let agent_ranking = survey.data["Agent Ranking"];
@@ -40,6 +39,8 @@ ranking_survey.onComplete.add(function (survey) {
         ranking_survey.clear(true, true);
         ranking_survey.pages[0].elements[0].choices.length = 0
     }
+
+    setup_next_round();
 
     if (curr_layout_idx >= layout_order.length) {
          data = {
