@@ -27,8 +27,6 @@ $(function() {
         };
         socket.emit("create", data);
         $('#waiting').show();
-        $('#join').hide();
-        $('#join').attr("disabled", true);
         $('#create').hide();
         $('#create').attr("disabled", true)
         $("#instructions").hide();
@@ -36,17 +34,10 @@ $(function() {
     });
 });
 
-$(function() {
-    $('#join').click(function() {
-        socket.emit("join", {});
-        $('#join').attr("disabled", true);
-        $('#create').attr("disabled", true);
-    });
-});
 
 $(function() {
     $('#leave').click(function() {
-        socket.emit('leave', {});
+        socket.emit('leave', {"pid": PID});
         $('#leave').attr("disabled", true);
     });
 });
@@ -71,20 +62,10 @@ socket.on('waiting', function(data) {
     $('#tutorial').hide();
     $("#overcooked").empty();
     $('#lobby').show();
-    $('#join').hide();
-    $('#join').attr("disabled", true)
     $('#create').hide();
     $('#create').attr("disabled", true)
     $('#leave').show();
     $('#leave').attr("disabled", false);
-    if (!data.in_game) {
-        // Begin pinging to join if not currently in a game
-        if (window.intervalID === -1) {
-            window.intervalID = setInterval(function() {
-                socket.emit('join', {});
-            }, 1000);
-        }
-    }
 });
 
 socket.on('creation_failed', function(data) {
@@ -95,8 +76,6 @@ socket.on('creation_failed', function(data) {
     $("#instructions").show();
     $('#tutorial').show();
     $('#waiting').hide();
-    $('#join').show();
-    $('#join').attr("disabled", false);
     $('#create').show();
     $('#create').attr("disabled", false);
     $('#overcooked').append(`<h4>Sorry, game creation code failed with error: ${JSON.stringify(err)}</>`);
@@ -118,8 +97,6 @@ socket.on('start_game', function(data) {
     $('#game-over').hide();
     $('#lobby').hide();
     $('#waiting').hide();
-    $('#join').hide();
-    $('#join').attr("disabled", true);
     $('#create').hide();
     $('#create').attr("disabled", true)
     $("#instructions").hide();
@@ -169,8 +146,6 @@ socket.on('end_game', function(data) {
     }
     $('#game-title').hide();
     $('#game-over').show();
-    $("#join").show();
-    $('#join').attr("disabled", false);
     $("#create").show();
     $('#create').attr("disabled", false)
     $("#instructions").show();
@@ -187,8 +162,6 @@ socket.on('end_game', function(data) {
 socket.on('end_lobby', function() {
     // Hide lobby
     $('#lobby').hide();
-    $("#join").show();
-    $('#join').attr("disabled", false);
     $("#create").show();
     $('#create').attr("disabled", false)
     $("#leave").hide();

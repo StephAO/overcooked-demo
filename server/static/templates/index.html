@@ -18,7 +18,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"></script>
     <script src="//cdn.jsdelivr.net/npm/phaser@3.23.0/dist/phaser.min.js"></script>
 
-    <script src="static/js/graphics.js", type="text/javascript"></script>
+    <script src="static/js/graphics.js" type="text/javascript"></script>
     <!-- <script src="static/js/dummy_graphics.js", type="text/javascript"></script> -->
     <script src="static/js/index.js" type="text/javascript"></script>
 
@@ -33,47 +33,55 @@
 	  <label for="playerZero" style="color:#1E6A9E">Player 1</label>
 	  <select class="form-control" id="playerZero" name="playerZero">
         <option value="human">Human Keyboard Input</option>
-        {% for agent_name in agent_names %}
-            <option value={{agent_name}}>{{agent_name}}</option>
-        {% endfor %}
+        <option value=oai_sp>SP</option>
+        <option value=oai_bcp>BCP</option>
+        <option value=oai_fcp>FCP</option>
+        <option value=oai_hrl>HAHA</option>
+<!--        {% for agent_name in agent_names %}-->
+<!--            <option value={{agent_name}}>{{agent_name}}</option>-->
+<!--        {% endfor %}-->
 	  </select>
     </div>
   <div class="form-group col-lg-3">
     <label for="playerOne" style="color:#44956B">Player 2</label>
     <select class="form-control" id="playerOne" name="playerOne">
+        <option value=oai_sp>SP</option>
+        <option value=oai_bcp>BCP</option>
+        <option value=oai_fcp>FCP</option>
+        <option value=oai_hrl>HAHA</option>
         <option value="human">Human Keyboard Input</option>
-        {% for agent_name in agent_names %}
-            <option value={{agent_name}}>{{agent_name}}</option>
-        {% endfor %}
     </select>
   </div>
 	<div class="form-group col-lg-2">
 	  <label for="layout">Layout</label>
 	  <select class="form-control" id="layout" name="layout">
-        {% for layout in layouts %}
-            <option value={{layout}}>{{layout}}</option>
-        {% endfor %}
+        <option value=asymmetric_advantages>Asymmetric Advantages</option>
+        <option value=forced_coordination>Forced Coordination</option>
+        <option value=counter_circuit_o_1order>Counter Circuit</option>
+<!--        {% for layout in layouts %}-->
+<!--            <option value={{layout}}>{{layout}}</option>-->
+<!--        {% endfor %}-->
 	  </select>
 	</div>
   <div class="form-group col-lg-2">
     <label for="gameTime">Game Length (sec)</label>
     <input type="number" id="gameTime" value="30" min="1" max="1800" name="gameTime">
   </div>
-  <div class="form-group col-lg-2">
-    <label for="showPotential">Show Potential?</label>
-    <input type="checkbox" id="showPotential" name="showPotential">
-  </div>
+<!--  <div class="form-group col-lg-2">-->
+<!--    <label for="showPotential">Show Potential?</label>-->
+<!--    <input type="checkbox" id="showPotential" name="showPotential">-->
+<!--  </div>-->
   
       </div>
       </div>
     </form>
     <h4 id="instructions" class="text-center"><a href="./instructions">Instructions</a></h4>
     <h4 id="tutorial" class="text-center"><a href="./tutorial">Tutorial</a></h4>
-    <div id="lobby", class="text-center" style="display:none">
+    <div id="lobby" class="text-center" style="display:none">
         <h4 class="text-center">Game Lobby</h4>
         Waiting for game to start...
     </div>
-    <div id="waiting", class="text-center" style="display:none">
+    <div id="waiting" class="text-center" style="display:none">
       Waiting for game to be created. Please be patient...
     </div>
     <div id="overcooked-container" class="text-center">
@@ -84,7 +92,6 @@
     </div>
     <div id="control" class="text-center">
         <button id="create">Create Game</button>
-        <button id="join">Join Existing Game</button>
         <button id="leave" style="display:none;">Leave</button>
     </div>
     

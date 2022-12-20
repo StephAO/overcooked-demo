@@ -142,6 +142,8 @@ def try_create_game(game_name ,**kwargs):
     """
     try:
         curr_id = FREE_IDS.get(block=False)
+        if not FREE_MAP[curr_id]:
+            print("Current id is already in use", flush=True)
         assert FREE_MAP[curr_id], "Current id is already in use"
         game_cls = GAME_NAME_TO_CLS.get(game_name, OvercookedGame)
         game = game_cls(id=curr_id, **kwargs)
@@ -502,9 +504,9 @@ def on_leave(data):
         was_active = _leave_game(user_id)
 
         if was_active:
-            emit('end_game', { "status" : Game.Status.DONE, "data" : {}})
+            socketio.emit('end_game', { "status" : Game.Status.DONE, "data" : {}})
         else:
-            emit('end_lobby')
+            socketio.emit('end_lobby')
 
 
 @socketio.on('action')
