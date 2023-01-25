@@ -25,12 +25,19 @@ $(function() {
             "create_if_not_found" : false,
             "pid": PID
         };
-        socket.emit("create", data);
-        $('#waiting').show();
-        $('#create').hide();
-        $('#create').attr("disabled", true)
-        $("#instructions").hide();
-        $('#tutorial').hide();
+        $('#no_two_humans').hide()
+        console.log(params, params['playerZero'], params.playerZero)
+        if (params.playerZero == 'human' && params.playerOne == 'human') {
+            $('#no_two_humans').show()
+            console.log("Showing")
+        } else {
+            socket.emit("create", data);
+            $('#waiting').show();
+            $('#create').hide();
+            $('#create').attr("disabled", true)
+            $("#instructions").hide();
+            $('#tutorial').hide();
+        }
     });
 });
 
