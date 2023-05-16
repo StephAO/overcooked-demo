@@ -26,7 +26,7 @@
     },
     "agentComp" : {
         "layouts" : ["counter_circuit_o_1order"],
-        "agents" : ["oai_fcp", "oai_sp", "oai_bcp", "oai_hrl", "oai_hrl+tuned"],
+        "agents" : ["oai_fcp", "oai_bcp", "oai_hrl", "oai_hrl+tuned"],
         "non_human_colors" : ["pink", "yellow", "burgundy", "mint", "cyan"],
         "agent_pairs": [["oai_hrl","oai_hrl_tuned"]],
         "gameTime" : 80
