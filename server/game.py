@@ -387,6 +387,7 @@ class OvercookedGame(Game):
     def __init__(self, layouts=["cramped_room"], mdp_params=None, num_players=2, gameTime=30, playerZero='human',
                  playerOne='human', showPotential=False, randomized=False, **kwargs):
         super(OvercookedGame, self).__init__(**kwargs)
+        # Swap indices
         mdp_params = mdp_params or {}
         self.show_potential = showPotential
         self.mdp_params = mdp_params
@@ -858,7 +859,7 @@ class TutorialAI():
 
         # Deliver soup
         Action.STAY,
-        # Action.STAY,
+        Action.STAY,
         # Action.INTERACT,
         Action.INTERACT,
         Action.INTERACT,

@@ -47,28 +47,28 @@ var json = {
               "value": "q2",
               "text": "The human-agent team fluency improved over time:"
             }, {
+//              "value": "q3",
+//              "text": "I was the most important team member:"
+//            }, {
+//              "value": "q4",
+//              "text": "The agent was the most important team member:"
+//            }, {
               "value": "q3",
-              "text": "I was the most important team member:"
-            }, {
-              "value": "q4",
-              "text": "The agent was the most important team member:"
-            }, {
-              "value": "q5",
               "text": "I trusted the agent to do the right thing:"
             }, {
-              "value": "q6",
+              "value": "q4",
               "text": "The agent helped me adapt to the task:"
             }, {
-              "value": "q7",
+              "value": "q5",
               "text": "I understood what the agent was trying to accomplish:"
             }, {
-              "value": "q8",
+              "value": "q6",
               "text": "The agent understood what I was trying to accomplish:"
             }, {
-              "value": "q9",
+              "value": "q7",
               "text": "The agent was intelligent:"
             }, {
-              "value": "q10",
+              "value": "q8",
               "text": "The agent was cooperative:"
             }
           ],
@@ -100,11 +100,11 @@ var survey_css = {
 likert_survey = new Survey.Model(json);
 likert_survey.onComplete.add(function (sender) {
     let likert_scores = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < 8; i++) {
         likert_scores[i] = sender.data["likert"][`q${i + 1}`];
     }
     let data = {
-        "agent_name" : agent_order[curr_agent_idx],
+        "agent_name" : agent_pair[curr_agent_idx],
         "layout_name" : layout_order[curr_layout_idx],
         "likert_scores" : likert_scores.toString(),
         "round_score" : round_score,
@@ -116,14 +116,14 @@ likert_survey.onComplete.add(function (sender) {
     socket.emit("submit_survey", data);
     likert_survey.clear(true, true);
     $('#surveyElement').hide();
-    agent_color_name = name_to_color[agent_order[curr_agent_idx]] + ' chef';
-    var new_agent = new Survey.ItemValue(agent_order[curr_agent_idx], agent_color_name);
+    agent_color_name = name_to_color[agent_pair[curr_agent_idx]] + ' chef';
+    var new_agent = new Survey.ItemValue(agent_pair[curr_agent_idx], agent_color_name);
     console.log(new_agent);
     ranking_survey.pages[0].elements[0].choices.push(new_agent);
     // Setup agent ordering
     el_id = `#agent-${curr_agent_idx+1}`;
-    $(el_id+"-img").attr('src', `\static/assets/${name_to_color[agent_order[curr_agent_idx]]}_chef.png`);
-    $(el_id+"-dsc").text(`${curr_agent_idx+1}. ${name_to_color[agent_order[curr_agent_idx]]} chef`);
+    $(el_id+"-img").attr('src', `\static/assets/${name_to_color[agent_pair[curr_agent_idx]]}_chef.png`);
+    $(el_id+"-dsc").text(`${curr_agent_idx+1}. ${name_to_color[agent_pair[curr_agent_idx]]} chef`);
     $(el_id).show();
     // Rank only if there's enough agents to do so
     if (ranking_survey.pages[0].elements[0].choices.length < 2) {

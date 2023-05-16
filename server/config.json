@@ -1,6 +1,6 @@
 {
     "logfile" : "app.log",
-    "layouts" : ["asymmetric_advantages", "forced_coordination", "counter_circuit_o_1order"],
+    "layouts" : ["asymmetric_advantages", "forced_coordination", "counter_circuit_o_1order", "cramped_room", "coordination_ring"],
     "MAX_GAMES" : 10,
     "MAX_GAME_LENGTH" : 120,
     "AGENT_DIR" : "./static/assets/agents",
@@ -25,9 +25,11 @@
         "onion_value" : 21
     },
     "agentComp" : {
-        "layouts" : ["counter_circuit_o_1order", "forced_coordination", "asymmetric_advantages"],
-        "agents" : ["oai_fcp", "oai_sp", "oai_bcp", "oai_hrl"],
-        "non_human_colors" : ["pink", "yellow", "burgundy", "mint", "cyan"]
+        "layouts" : ["counter_circuit_o_1order", "forced_coordination", "asymmetric_advantages", "cramped_room", "coordination_ring"],
+        "agents" : ["oai_fcp", "oai_sp", "oai_bcp", "oai_hrl", "oai_hrl+tuned"],
+        "non_human_colors" : ["pink", "yellow", "burgundy", "mint", "cyan"],
+        "agent_pairs": [["oai_hrl","oai_hrl_tuned"]],
+        "gameTime" : 80
     },
     "layout_globals" : {
         "onion_value" : 21,

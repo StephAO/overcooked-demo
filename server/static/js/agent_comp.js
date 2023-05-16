@@ -3,18 +3,24 @@ var socket = io();
 
 var config = JSON.parse($('#config').text());
 
-var bonus_per_dish = 0.03;
-var curr_agent_idx = 0;
+var bonus_per_dish = 0.04;
+var curr_agent_idx = -2;
 var curr_layout_idx = -1;
 var round_num = -1
 var tot_rounds = -1
 var round_score = -1;
 var tot_soups_served = 0;
-var agent_order = [];
+var agent_pair = [];
 var layout_order = [];
 var name_to_color = {};
 var color_to_name = {};
 var human_color = 'blue';
+
+for(i = 0; i < config['agents'].length; i++) {
+    name_to_color[config['agents'][i]] = (config['non_human_colors'][i]);
+    color_to_name[config['non_human_colors'][i]] =  config['agents'][i];
+}
+
 var layout_order_has_been_set = false;
 
 const uuidv4 = () => {
@@ -31,12 +37,6 @@ const SESS_ID = params.has('SESSION_ID') ? params.get('SESSION_ID') : 'None';
 
 console.log(PID, STUDY_ID, SESS_ID)
 
-for(i = 0; i < config['agents'].length; i++) {
-    name_to_color[config['agents'][i]] = (config['non_human_colors'][i]);
-    color_to_name[config['non_human_colors'][i]] = config['agents'][i];
-}
-console.log(name_to_color);
-
 const cartesian = (...a) => a.reduce((a, b) => a.flatMap(d => b.map(e => [d, e].flat())));
 const shuffleArray = (array) => {
     for (let i = array.length - 1; i > 0; i--) {
@@ -51,11 +51,24 @@ const set_layout_order = () => {
     console.log(layout_order);
 };
 
+const set_agent_pair = () => {
+    agent_pairs = config['agent_pairs'];
+    shuffleArray(agent_pairs);
+    agent_pair = agent_pairs[0]
+    console.log(agent_pair);
+};
+
 const setup_next_round = () => {
     curr_agent_idx++;
-    if (curr_agent_idx >= agent_order.length) {
-        agent_order = config['agents'];
-        shuffleArray(agent_order);
+    if (curr_agent_idx >= agent_pair.length | curr_agent_idx < 0) {
+        agent_pair = (Math.random() >= 0.5) ? [agent_pair[0], agent_pair[1]] : [agent_pair[1], agent_pair[0]]
+        shuffleArray(config['non_human_colors'])
+
+        for(let i = 0; i < agent_pair.length; i++) {
+            name_to_color[agent_pair[i]] = (config['non_human_colors'][i]);
+            color_to_name[config['non_human_colors'][i]] = agent_pair[i];
+        }
+
         curr_agent_idx = 0;
         curr_layout_idx++;
         for (let i = 1; i <= 5; i++) {
@@ -65,13 +78,13 @@ const setup_next_round = () => {
         $('#new-layout').text(`New Layout (${curr_layout_idx + 1}/${layout_order.length})!`);
         $('#new-layout').show();
     }
-    $("#teammate-img").attr('src', `\static/assets/${name_to_color[agent_order[curr_agent_idx]]}_chef.png`);
-    $('#teammate-desc').text(`This is ${name_to_color[agent_order[curr_agent_idx]]} chef. They will be your teammate for the next round.`);
+    $("#teammate-img").attr('src', `\static/assets/${name_to_color[agent_pair[curr_agent_idx]]}_chef.png`);
+    $('#teammate-desc').text(`This is ${name_to_color[agent_pair[curr_agent_idx]]} chef. They will be your teammate for the next round.`);
 
-    round_num = curr_layout_idx * config['agents'].length + curr_agent_idx + 1;
-    tot_rounds = config['agents'].length * config['layouts'].length;
+    round_num = curr_layout_idx * agent_pair.length + curr_agent_idx + 1;
+    tot_rounds = agent_pair.length * config['layouts'].length;
 
-    console.log("SNR", curr_layout_idx, layout_order.length, '-', curr_agent_idx, agent_order.length)
+//    console.log("SNR", curr_layout_idx, layout_order.length, '-', curr_agent_idx, agent_pair.length)
     $("#rankingElement").hide();
     $('#agents-ordering').hide();
     if (curr_layout_idx < layout_order.length) {
@@ -99,12 +112,19 @@ $(function() {
 $(function() {
     $('#start-next-round').click(function() {
         // Config for this specific game
+        if (Math.random() >= 0.5) {
+            players = ["human", agent_pair[curr_agent_idx]];
+            human_idx =  0;
+        } else {
+            players = [agent_pair[curr_agent_idx], "human"];
+            human_idx =  1;
+        }
         let data = {
             "params" : {
-                "playerZero" : "human",
-                "playerOne" : agent_order[curr_agent_idx],
+                "playerZero" : players[0],
+                "playerOne" : players[1],
                 "layouts" : [layout_order[curr_layout_idx]],
-                "gameTime" : 80,
+                "gameTime" : config["gameTime"],
                 "randomized" : false,
             },
             "game_name" : "overcooked",
@@ -113,10 +133,18 @@ $(function() {
         $('#start-next-round').hide();
         console.log("agent images should be hidden")
         $('#agents-imgs').hide();
-        $('#new-layout').hide()
-        setAgentColors({0: human_color, 1: name_to_color[agent_order[curr_agent_idx]]})
+        $('#new-layout').hide();
+        player_idx = (1 - human_idx);
+        player_colors = {}
+        player_colors[human_idx] = human_color;
+        console.log(curr_agent_idx, name_to_color, agent_pair, name_to_color[agent_pair[curr_agent_idx]])
+        player_colors[player_idx] = name_to_color[agent_pair[curr_agent_idx]];
+        console.log(player_colors);
+        setAgentColors(player_colors);
         // create (or join if it exists) new game
+        console.log(data)
         socket.emit("create", data);
+        console.log("started")
         $('#overcooked-container').show();
     });
 });
@@ -227,6 +255,7 @@ function disable_key_listener() {
 
 socket.once("connect", function() {
     if (!layout_order_has_been_set) {
+        set_agent_pair();
         set_layout_order();
         layout_order_has_been_set = true;
         setup_next_round();
