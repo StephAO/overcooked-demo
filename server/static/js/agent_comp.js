@@ -15,11 +15,12 @@ var layout_order = [];
 var name_to_color = {};
 var color_to_name = {};
 var human_color = 'blue';
+var human_idx = 0;
 
-for(i = 0; i < config['agents'].length; i++) {
-    name_to_color[config['agents'][i]] = (config['non_human_colors'][i]);
-    color_to_name[config['non_human_colors'][i]] =  config['agents'][i];
-}
+//for(i = 0; i < config['agents'].length; i++) {
+//    name_to_color[config['agents'][i]] = (config['non_human_colors'][i]);
+//    color_to_name[config['non_human_colors'][i]] =  config['agents'][i];
+//}
 
 var layout_order_has_been_set = false;
 
@@ -77,6 +78,12 @@ const setup_next_round = () => {
         }
         $('#new-layout').text(`New Layout (${curr_layout_idx + 1}/${layout_order.length})!`);
         $('#new-layout').show();
+
+        if (Math.random() >= 0.5) {
+            human_idx =  0;
+        } else {
+            human_idx =  1;
+        }
     }
     $("#teammate-img").attr('src', `\static/assets/${name_to_color[agent_pair[curr_agent_idx]]}_chef.png`);
     $('#teammate-desc').text(`This is ${name_to_color[agent_pair[curr_agent_idx]]} chef. They will be your teammate for the next round.`);
@@ -112,12 +119,10 @@ $(function() {
 $(function() {
     $('#start-next-round').click(function() {
         // Config for this specific game
-        if (Math.random() >= 0.5) {
+        if (human_idx == 0) {
             players = ["human", agent_pair[curr_agent_idx]];
-            human_idx =  0;
         } else {
             players = [agent_pair[curr_agent_idx], "human"];
-            human_idx =  1;
         }
         let data = {
             "params" : {

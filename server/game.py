@@ -7,7 +7,7 @@ from overcooked_ai_py.mdp.overcooked_env import OvercookedEnv
 from overcooked_ai_py.mdp.actions import Action, Direction
 from overcooked_ai_py.planning.planners import MotionPlanner, NO_COUNTERS_PARAMS
 from oai_agents.agents.agent_utils import load_agent
-from oai_agents.common.subtasks import calculate_completed_subtask
+from oai_agents.common.subtasks import calculate_completed_subtask, facing
 from pathlib import Path
 import random, os, pickle, json
 import numpy as np
@@ -416,6 +416,7 @@ class OvercookedGame(Game):
         self.agent_msg = ' '
         self.subtasks_completed = {playerZero: [], playerOne: []}
         self.player_names = [playerZero, playerOne]
+        self.npc_policy_settings = {}
 
         if randomized:
             random.shuffle(self.layouts)
@@ -423,14 +424,16 @@ class OvercookedGame(Game):
         if playerZero != 'human':
             player_zero_id = playerZero + '_0'
             self.add_player(player_zero_id, idx=0, buff_size=3, is_human=False)
-            self.npc_policies[player_zero_id] = self.get_policy(playerZero, idx=0)
+            self.npc_policy_settings[player_zero_id] = (0, 'haha' in playerZero, 'tuned' in playerZero)
+            self.npc_policies[player_zero_id] = self.get_policy(playerZero)
             self.npc_state_queues[player_zero_id] = Queue(maxsize=3)
             self.npc_prev_states[player_zero_id] = None
 
         if playerOne != 'human':
             player_one_id = playerOne + '_1'
             self.add_player(player_one_id, idx=1, buff_size=3, is_human=False)
-            self.npc_policies[player_one_id] = self.get_policy(playerOne, idx=1)
+            self.npc_policy_settings[player_one_id] = (1, 'haha' in playerOne, 'tuned' in playerOne)
+            self.npc_policies[player_one_id] = self.get_policy(playerOne)
             self.npc_state_queues[player_one_id] = Queue(maxsize=3)
             self.npc_prev_states[player_one_id] = None
 
@@ -509,9 +512,16 @@ class OvercookedGame(Game):
 
         # Apply overcooked game logic to get state transition
         prev_state = self.state
+
+        tile_in_front, prev_obj = [], []
+        for i in range(2):
+            tile_in_front.append(facing(self.mdp.terrain_mtx, self.state.players[i]))
+            prev_obj.append(self.state.players[i].held_object.name if self.state.players[i].held_object else None)
+
         self.state, info = self.mdp.get_state_transition(prev_state, joint_action)
         for i, player_name in enumerate(self.player_names):
-            subtask_comp = calculate_completed_subtask(self.mdp.terrain_mtx, prev_state, self.state, i)
+            curr_obj = self.state.players[i].held_object.name if self.state.players[i].held_object else None
+            subtask_comp = calculate_completed_subtask(prev_obj[i], curr_obj, tile_in_front[i])
             if subtask_comp is not None:
                 self.subtasks_completed[player_name].append( (self.curr_tick, subtask_comp) )
 
@@ -562,7 +572,8 @@ class OvercookedGame(Game):
         for npc_policy in self.npc_policies:
             self.npc_policies[npc_policy].reset()
             horizon = self.max_time * FPS / self.ticks_per_ai_action  # num seconds * 30 fps / frames per agent actions
-            self.npc_policies[npc_policy].set_encoding_params(self.mdp, horizon)
+            idx, is_haha, tune_haha = self.npc_policy_settings[npc_policy]
+            self.npc_policies[npc_policy].set_encoding_params(idx, horizon, mdp=self.mdp, is_haha=is_haha, output_message=False, tune_subtasks=tune_haha)
             self.npc_state_queues[npc_policy].put(self.state)
             t = Thread(target=self.npc_policy_consumer, args=(npc_policy,))
             self.threads.append(t)
@@ -596,23 +607,14 @@ class OvercookedGame(Game):
         obj_dict['state'] = self.get_state() if self._is_active else None
         return obj_dict
 
-    def get_policy(self, npc_id, idx=0):
+    def get_policy(self, npc_id):
         if npc_id.lower().startswith("oai"):
-            try:
-                output_msg, tune_hrl = False, None
-                if '_msg' in npc_id:
-                    output_msg = True
-                    npc_id = npc_id.replace('_msg', '')
-                if '_tuned' in npc_id:
-                    tune_hrl = True
-                    npc_id = npc_id.replace('_tuned', '')
-                # Loading aoi agents requires additional helpers
-                fpath = AGENT_DIR / npc_id
-                agent = load_agent(fpath)
-                agent.set_idx(idx, self.layouts[0], is_hrl=('hrl' in npc_id), output_message=output_msg, tune_subtasks=tune_hrl)
-                return agent
-            except Exception as e:
-                raise IOError(f"{fpath}, Error loading OAI Agent\n{e}")
+            if '_tuned' in npc_id:
+                npc_id = npc_id.replace('_tuned', '')
+            fpath = AGENT_DIR / npc_id
+            return load_agent(fpath)
+            # except Exception as e:
+            #     raise IOError(f"{fpath}, Error loading OAI Agent\n{e}")
         else:
             try:
                 fpath = os.path.join(AGENT_DIR, npc_id, 'agent.pickle')

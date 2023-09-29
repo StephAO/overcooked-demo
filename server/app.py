@@ -2,8 +2,8 @@ import os
 
 # Import and patch the production eventlet server if necessary
 # if os.getenv('FLASK_ENV', 'production') == 'production':
-import eventlet
-eventlet.monkey_patch()
+# import eventlet
+# eventlet.monkey_patch()
 
 # All other imports must come after patch to ensure eventlet compatibility
 import queue, atexit, json, logging
@@ -13,7 +13,7 @@ from flask import Flask, render_template, jsonify, request, Blueprint
 from flask_socketio import SocketIO, join_room, leave_room, emit
 from game import OvercookedGame, OvercookedTutorial, Game, OvercookedPsiturk
 import game
-from pyairtable import Base
+from pyairtable import Api
 
 
 ### Thoughts -- where I'll log potential issues/ideas as they come up
@@ -97,8 +97,10 @@ GAME_NAME_TO_CLS = {
 
 game._configure(MAX_FPS, MAX_GAME_LENGTH, AGENT_DIR)
 
-api_key = os.environ['AIRTABLE_API_KEY']
-airtable_base = Base(api_key, 'appANDT09wpSE4QLn')
+airtable_api = Api(os.environ['AIRTABLE_API_KEY'])
+airtable_survey_table = airtable_api.table('appANDT09wpSE4QLn', 'tblaCbOjLcQqpNGMF')
+airtable_ranking_table = airtable_api.table('appANDT09wpSE4QLn', 'tblxp2qGubm69vH82')
+airtable_completed_table = airtable_api.table('appANDT09wpSE4QLn', 'tbl7IbHztYVJhqmvE')
 
 
 #######################
@@ -127,7 +129,6 @@ def create_app():
 #################################
 # Global Coordination Functions #
 #################################
-
 def try_create_game(game_name ,**kwargs):
     """
     Tries to create a brand new Game object based on parameters in `kwargs`
@@ -543,21 +544,22 @@ def on_disconnect(data):
 
     del USERS[user_id]
 
+
 @socketio.on('submit_survey')
 def on_submit_survey(data):
     print(type(data), data, flush=True)
-    airtable_base.create('tblaCbOjLcQqpNGMF', data)
+    airtable_survey_table.create(data)
 
 @socketio.on('submit_ranking')
 def on_submit_ranking(data):
     print(type(data), data, flush=True)
     data['ordered_agents'] = json.dumps(data['ordered_agents'])
-    airtable_base.create('tblxp2qGubm69vH82', data)
+    airtable_ranking_table.create(data)
 
 @socketio.on('completed_full_survey')
 def on_done_survey(data):
     print(type(data), data, flush=True)
-    airtable_base.create('tbl7IbHztYVJhqmvE', data)
+    airtable_completed_table.create(data)
 
 
 # Exit handler for server

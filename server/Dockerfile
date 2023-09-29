@@ -13,7 +13,7 @@ RUN pip install -r requirements.txt
 
 # Install eventlet production server if production build
 # RUN if [ "$BUILD_ENV" = "production" ] ; then pip install gunicorn==20.1.0 eventlet==0.30.2 ; fi
-RUN pip install gunicorn eventlet==0.30.2
+RUN pip install gunicorn eventlet
 # Clone oai_agents code
 RUN git clone https://github.com/StephAO/overcooked_ai.git --branch $OVERCOOKED_BRANCH --single-branch /overcooked_ai
 # TODO - remove personal auth token
@@ -34,6 +34,7 @@ COPY ./static ./static
 COPY ./*.py ./
 COPY ./graphics/$GRAPHICS ./static/js/graphics.js
 COPY ./config.json ./config.json
+COPY ./planner_data/* /overcooked_ai/src/overcooked_ai_py/data/planners/
 
 COPY ./gunicorn.py ./gunicorn.py
 # Set environment variables that will be used by app.py
