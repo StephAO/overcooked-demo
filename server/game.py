@@ -759,7 +759,7 @@ class DummyAI():
     Randomly samples actions. Used for debugging
     """
 
-    def set_encoding_params(self, mdp, horizon):
+    def set_encoding_params(self, *args, **kwargs):
         pass
 
     def action(self, state):
@@ -776,7 +776,7 @@ class DummyComputeAI(DummyAI):
     Performs simulated compute before randomly sampling actions. Used for debugging
     """
 
-    def set_encoding_params(self, mdp, horizon):
+    def set_encoding_params(self, *args, **kwargs):
         pass
 
     def __init__(self, compute_unit_iters=1e5):
@@ -808,7 +808,7 @@ class StayAI():
     """
     Always returns "stay" action. Used for debugging
     """
-    def set_encoding_params(self, mdp, horizon):
+    def set_encoding_params(self, *args, **kwargs):
         pass
 
     def action(self, state):
@@ -916,5 +916,5 @@ class TutorialAI():
         self.curr_tick = -1
         self.curr_phase += 1
 
-    def set_encoding_params(self, mdp, horizon):
+    def set_encoding_params(self, *args, **kwargs):
         pass
