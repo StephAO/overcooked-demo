@@ -574,7 +574,7 @@ class OvercookedGame(Game):
         for npc_policy in self.npc_policies:
             self.npc_policies[npc_policy].reset()
             horizon = self.max_time * FPS / self.ticks_per_ai_action  # num seconds * 30 fps / frames per agent actions
-            idx, is_haha, tune_haha = self.npc_policy_settings[npc_policy]
+            idx, is_haha, tune_haha, det = self.npc_policy_settings[npc_policy]
             self.npc_policies[npc_policy].set_encoding_params(idx, horizon, mdp=self.mdp, is_haha=is_haha, output_message=False, tune_subtasks=tune_haha)
             self.npc_state_queues[npc_policy].put(self.state)
             t = Thread(target=self.npc_policy_consumer, args=(npc_policy,))
