@@ -4,9 +4,13 @@ import pandas as pd
 
 
 def get_filtered_results(exp_name='haha_tuned'):
-    df_finished = pd.read_csv(f'./AAMAS24/finished_{exp_name}.csv')
-    df_survey = pd.read_csv(f'./AAMAS24/survey_{exp_name}.csv')
+    # df_finished = pd.read_csv(f'./AAMAS24/finished_{exp_name}.csv')
+    # df_survey = pd.read_csv(f'./AAMAS24/survey_{exp_name}.csv')
     df_ranking = pd.read_csv(f'./AAMAS24/ranking_{exp_name}.csv')
+
+    df_finished = pd.read_csv(f'./AAMAS/baselines_finished+25.csv')
+    df_survey = pd.read_csv(f'./AAMAS/baselines_study_survey+25.csv')
+
 
     # Filter STUDY ID
     if 'bcp' in exp_name:
