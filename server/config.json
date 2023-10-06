@@ -26,9 +26,9 @@
     },
     "agentComp" : {
         "layouts" : ["asymmetric_advantages", "forced_coordination", "counter_circuit_o_1order", "cramped_room", "coordination_ring"],
-        "agents" : ["oai_fcp", "oai_sp", "oai_bcp", "oai_hrl", "oai_hrl+tuned"],
+        "agents" : ["oai_sp", "oai_sp_edet", "oai_sp_det", "oai_sp_det_edet", "oai_bcp", "oai_bcp_edet",  "oai_bcp_det", "oai_bcp_det_edet"],
         "non_human_colors" : ["pink", "mint", "yellow", "burgundy", "cyan"],
-        "agent_pairs": [["oai_haha_fcp_fcp_tuned","oai_haha_fcp_fcp"]],
+        "agent_pairs": [["oai_sp","oai_sp_edet"]],
         "gameTime" : 80
     },
     "layout_globals" : {

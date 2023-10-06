@@ -424,7 +424,8 @@ class OvercookedGame(Game):
         if playerZero != 'human':
             player_zero_id = playerZero + '_0'
             self.add_player(player_zero_id, idx=0, buff_size=3, is_human=False)
-            self.npc_policy_settings[player_zero_id] = (0, 'haha' in playerZero, 'tuned' in playerZero)
+            # edet = evaluation deterministic (different than training deterministic which is just det
+            self.npc_policy_settings[player_zero_id] = (0, 'haha' in playerZero, 'tuned' in playerZero, 'edet' in playerZero)
             self.npc_policies[player_zero_id] = self.get_policy(playerZero)
             self.npc_state_queues[player_zero_id] = Queue(maxsize=3)
             self.npc_prev_states[player_zero_id] = None
@@ -432,7 +433,7 @@ class OvercookedGame(Game):
         if playerOne != 'human':
             player_one_id = playerOne + '_1'
             self.add_player(player_one_id, idx=1, buff_size=3, is_human=False)
-            self.npc_policy_settings[player_one_id] = (1, 'haha' in playerOne, 'tuned' in playerOne)
+            self.npc_policy_settings[player_one_id] = (1, 'haha' in playerOne, 'tuned' in playerOne, 'edet' in playerOne)
             self.npc_policies[player_one_id] = self.get_policy(playerOne)
             self.npc_state_queues[player_one_id] = Queue(maxsize=3)
             self.npc_prev_states[player_one_id] = None
@@ -470,7 +471,8 @@ class OvercookedGame(Game):
             if state.players == self.npc_prev_states[policy_id] and stale < 3:
                 continue
             self.npc_prev_states[policy_id] = state.players
-            npc_action, agent_msg = policy.action(state, deterministic=False)
+            deterministic = self.npc_policy_settings[policy_id][3]
+            npc_action, agent_msg = policy.action(state, deterministic=deterministic)
             if agent_msg != ' ':
                 self.agent_msg = agent_msg
             super(OvercookedGame, self).enqueue_action(policy_id, npc_action)
@@ -611,6 +613,8 @@ class OvercookedGame(Game):
         if npc_id.lower().startswith("oai"):
             if '_tuned' in npc_id:
                 npc_id = npc_id.replace('_tuned', '')
+            if '_edet' in npc_id: # edet = evaluation deterministic (different than training deterministic which is just det
+                npc_id = npc_id.replace('_edet', '')
             fpath = AGENT_DIR / npc_id
             return load_agent(fpath)
             # except Exception as e:
