@@ -28,7 +28,7 @@
         "layouts" : ["asymmetric_advantages", "forced_coordination", "counter_circuit_o_1order", "cramped_room", "coordination_ring"],
         "agents" : ["oai_sp", "oai_sp_edet", "oai_sp_det", "oai_sp_det_edet", "oai_bcp", "oai_bcp_edet",  "oai_bcp_det", "oai_bcp_det_edet"],
         "non_human_colors" : ["pink", "mint", "yellow", "burgundy", "cyan"],
-        "agent_pairs": [["oai_bcp_det","oai_bcp_det_edet"]],
+        "agent_pairs": [["oai_fcp","oai_fcp_edet"]],
         "gameTime" : 80
     },
     "layout_globals" : {
