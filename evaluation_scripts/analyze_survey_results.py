@@ -7,7 +7,7 @@ from statsmodels.stats.multicomp import pairwise_tukeyhsd
 
 from load_and_filter_results import get_filtered_results
 
-df_survey, df_ranking, df_finished = get_filtered_results('SPs')
+df_survey, df_ranking, df_finished = get_filtered_results('BCPd')
 
 # df_survey = df_survey[df_survey.layout_name.isin(['counter_circuit_o_1order'])] #forced_coordination
 # df_ranking = df_ranking[df_ranking.layout_name.isin(['counter_circuit_o_1order'])]
@@ -114,19 +114,20 @@ for i, row in df_ranking.iterrows():
 rank_df = pd.DataFrame.from_dict(preferred)
 # print(rank_df)
 #
-print({k: np.mean(rank_df[rank_df['agent_name'] == k]) for k in rank_df.agent_name.unique()})
-agent_preferences = [rank_df[rank_df['agent_name'] == 'oai_haha_fcp_fcp_tuned']['rank_score'], rank_df[rank_df['agent_name'] == 'oai_haha_fcp_fcp']['rank_score']]
+# print({k: np.mean(rank_df[rank_df['agent_name'] == k]) for k in rank_df.agent_name.unique()})
+# agent_preferences = [rank_df[rank_df['agent_name'] == 'oai_haha_fcp_fcp_tuned']['rank_score'], rank_df[rank_df['agent_name'] == 'oai_haha_fcp_fcp']['rank_score']]
 #
-# print(f'-----Overall-----')
-# print(score_mean)
-# agent_list_of_scores = []
-# for agent_name in agent_names:
-#     scores = rank_df.loc[(df_survey['agent_name'] == agent_name)]['rank_score'].to_list()
-#     agent_list_of_scores.append(scores)
-#     print(f'Variance of scores for {agent_name}: {np.var(scores)}')
-#
-# print('\n')
-# ttest_results = ttest(*agent_list_of_scores)
+print(f'-----Overall-----')
+print(score_mean)
+agent_list_of_scores = []
+for agent_name in agent_names:
+    scores = rank_df.loc[(rank_df['agent_name'] == agent_name)]['rank_score'].to_list()
+    agent_list_of_scores.append(scores)
+    print(f'Variance of scores for {agent_name}: {np.var(scores)}')
+
+print('\n')
+ttest_results = ttest(*agent_list_of_scores)
+print(ttest_results)
 # exit(0)
 #
 # for ln in layout_names:

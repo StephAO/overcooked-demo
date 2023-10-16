@@ -5,7 +5,7 @@ import altair as alt
 from scipy.special import comb
 from load_and_filter_results import get_filtered_results
 
-exp_name = 'haha_comb'
+exp_name = 'haha_tuned'
 
 if 'comb' in exp_name:
     df_survey, df_ranking, df_finished = get_filtered_results('haha_bcp')
@@ -99,17 +99,16 @@ print(f"AVERAGE LIKERT SCORES FOR EACH QUESTION".center(50, '='))
 print("\nScale from -3 (Strongly Disagree) to 3 (Strongly Agree)\n")
 questions = [
     "The human-agent team worked fluently together:",
-     "The human-agent team fluency improved over time:",
-    #  "I was the most important team member:",
-    #  "The agent was the most important team member:",
+     # "The human-agent team fluency improved over time:",
      "I trusted the agent to do the right thing:",
      "The agent helped me adapt to the task:",
-     "I understood what the agent was trying to accomplish:",
-     "The agent understood what I was trying to accomplish:",
+     # "I understood what the agent was trying to accomplish:",
+     # "The agent understood what I was trying to accomplish:",
      "The agent was intelligent:",
-     "The agent was cooperative:"
+     # "The agent was cooperative:"
 ]
-
+# "I was the most important team member:",
+# "The agent was the most important team member:",
 
 likert_data = {question: {agent_name: [] for agent_name in df_survey.agent_name.unique()} for question in questions}
             #    if (question not in questions[1:4] and question not in questions[7:])}
@@ -125,12 +124,17 @@ likert_data_level = {question:
                      for question in questions}# if (question not in questions[1:4] and question not in questions[7:])} # exclude important teammates q
 
 for index, row in df_survey.iterrows():
-    likert_scores = [int(num) for num in row['likert_scores'].split(',')[:len(questions)]]
+    likert_scores = [int(num) for num in row['likert_scores'].split(',')[:8]]#len(questions)]]
+    q_idx = 0
     for i, ls in enumerate(likert_scores):
-        # if i in [1,2,3,7,8,9]: # exclude team member question [2,3]
-            # continue
-        likert_data[questions[i]][row['agent_name']].append(ls)
-        likert_data_level[questions[i]][row['agent_name']][level_map[ls]] += 1
+        # print(i,q_idx)
+        if i in [1,4,5,7]: # exclude certain questions to make graph smaller
+            continue
+        likert_data[questions[q_idx]][row['agent_name']].append(ls)
+        likert_data_level[questions[q_idx]][row['agent_name']][level_map[ls]] += 1
+        q_idx += 1
+
+# exclude_qs = [1,2,3,7]
 
 #This is just printing
 # for i, (q, agent_likert_data) in enumerate(likert_data.items()):

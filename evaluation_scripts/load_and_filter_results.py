@@ -4,12 +4,12 @@ import pandas as pd
 
 
 def get_filtered_results(exp_name='haha_tuned'):
-    # df_finished = pd.read_csv(f'./AAMAS24/finished_{exp_name}.csv')
-    # df_survey = pd.read_csv(f'./AAMAS24/survey_{exp_name}.csv')
+    df_finished = pd.read_csv(f'./AAMAS24/finished_{exp_name}.csv')
+    df_survey = pd.read_csv(f'./AAMAS24/survey_{exp_name}.csv')
     df_ranking = pd.read_csv(f'./AAMAS24/ranking_{exp_name}.csv')
 
-    df_finished = pd.read_csv(f'./AAMAS/baselines_finished+25.csv')
-    df_survey = pd.read_csv(f'./AAMAS/baselines_study_survey+25.csv')
+    # df_finished = pd.read_csv(f'./AAMAS/baselines_finished+25.csv')
+    # df_survey = pd.read_csv(f'./AAMAS/baselines_study_survey+25.csv')
 
 
     # Filter STUDY ID
@@ -71,7 +71,7 @@ def get_filtered_results(exp_name='haha_tuned'):
         human_completed_subtasks[row['agent_name']].append(subtask_completion['human'])
         num_subtask_comp['human'].append(len(subtask_completion['human']))
         num_subtask_comp[row['agent_name']].append(len(subtask_completion[row['agent_name']]))
-        if len(subtask_completion['human']) < 5:# or len(subtask_completion[row['agent_name']]) < 2:
+        if len(subtask_completion['human']) < 10:# or len(subtask_completion[row['agent_name']]) < 2:
             rows_to_drop.append((row['PID'], row['layout_name']))
         # elif row['round_score'] == 0:
         #     rows_to_drop.append((row['PID'], row['layout_name']))
