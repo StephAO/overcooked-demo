@@ -5,7 +5,7 @@ import altair as alt
 from scipy.special import comb
 from load_and_filter_results import get_filtered_results
 
-exp_name = 'haha_tuned'
+exp_name = 'comb'
 
 if 'comb' in exp_name:
     df_survey, df_ranking, df_finished = get_filtered_results('haha_bcp')
@@ -41,16 +41,23 @@ df_survey.loc[ df_survey["layout_name"] == "cramped_room", "layout_name"] = "Cra
 score_mean = df_survey.groupby(['layout_name', 'agent_name']).mean(['round_scores'])
 score_std = df_survey.groupby(['layout_name', 'agent_name']).std()
 print(f"AVERAGE IN-GAME SCORE PER AGENT".center(50, '='))
-print(score_mean)
-print(score_std)
-print('\n')
-print(df_survey)
+# print(score_mean)
+# print(score_std)
+# print('\n')
+# print(df_survey)
+
+
 
 df_survey2 = df_survey.copy()
 df_survey3 = df_survey.copy()
 df_survey3['layout_name'] = 'Average'
 df_survey2 = df_survey2.append(df_survey3)
 df_survey2.loc[df_survey2['layout_name'] == "Asymmetric Advantages", "layout_name"] = "Asymmetric Advs."
+
+# df_survey2 = df_survey2[df_survey2['layout_name'] == 'Average']
+# score_mean = df_survey2.groupby(['layout_name', 'agent_name']).mean(['round_scores'])
+# print(score_mean)
+# exit(0)
 
 # print(df_survey2)
 # print('----')
@@ -59,7 +66,7 @@ df_survey2.loc[df_survey2['layout_name'] == "Asymmetric Advantages", "layout_nam
 # ROUND SCORES
 round_score_chart = alt.Chart(df_survey2).mark_bar().encode(
     x=alt.X('agent_name:N', title='Agent Name', sort=['BCP', 'HAHA_BCP', 'FCP', 'HAHA_FCP']),
-    y=alt.Y('mean(round_score):Q', title='Mean Round Score', scale=alt.Scale(domain=[0, 350])),
+    y=alt.Y('mean(round_score):Q', title='Mean Round Score', scale=alt.Scale(domain=[0, 250])),
     color=alt.Color('agent_name:N', legend=None),
     # column=alt.Column(spacing=5)
 ).properties(
@@ -75,13 +82,13 @@ error_bars = alt.Chart().mark_errorbar(extent='stdev').encode(
     strokeWidth=alt.value(2),
     # color=alt.Color('species:Q', legend=None),
 )
-
+# "Cramped Room", "Asymmetric Advs.", "Coordination Ring", "Counter Circuit",
+#                                              "Forced Coordination",
 round_score_chart = alt.layer(round_score_chart, error_bars, data=df_survey2).facet(
-    column=alt.Column('layout_name:N', sort=["Cramped Room", "Asymmetric Advs.", "Coordination Ring", "Counter Circuit",
-                                             "Forced Coordination", "Average"],
+    column=alt.Column('layout_name:N', sort=["Average"],
                       header=alt.Header(labelFontSize=18, titleFontSize=20), title=None)
-).properties(
-    title='Average In-Game Score Per Agent'
+# ).properties(
+    # title='Average Score Per Agent'
 ).configure_title(
     fontSize=20,
     anchor='middle',
@@ -90,7 +97,7 @@ round_score_chart = alt.layer(round_score_chart, error_bars, data=df_survey2).fa
     titleFontSize=18
 )
 
-round_score_chart.save(f'graphs/{exp_name}_round_score.svg')
+round_score_chart.save(f'avg_only_graphs_{exp_name}_round_score.svg')
 
 # LIKERT
 # Likert Surveys
@@ -186,8 +193,7 @@ df_likert_final['perc_end_shifted'] = df_likert_final['perc_end'] - df_likert_fi
 df_likert_final.head(n=10)
 
 # level_labels = ['Strongly Disagree', 'Disagree', 'Somewhat Disagree', 'Neutral', 'Somewhat Agree', 'Agree', 'Strongly Agree']
-color_scale =alt.Scale(domain=levels,
-                              range=["#c30d24", "#C64D5C","#C98C94","#cccccc", "#90ADC1", "#538FB6", "#1770ab"])
+color_scale =alt.Scale(domain=levels, range=["#c30d24", "#C64D5C","#C98C94","#cccccc", "#90ADC1", "#538FB6", "#1770ab"])
 
 likert_chart = alt.Chart(df_likert_final).mark_bar().encode(
     x=alt.X('perc_start_shifted:Q', title='Percent (%)', scale=alt.Scale(domain=[-60, 90], nice=False)),
